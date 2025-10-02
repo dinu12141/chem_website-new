@@ -302,7 +302,7 @@ const Classes = () => {
               <div className="text-center lg:text-right">
                 <img 
                   src="/images/teacher-main.jpg" 
-                  alt="Nadeeka Warnakula Sir" 
+                  alt="NADEEKA Warnakula Sir" 
                   className="w-48 h-48 rounded-full object-cover mx-auto lg:ml-auto border-4 border-white/20"
                 />
               </div>

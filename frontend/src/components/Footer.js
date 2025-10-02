@@ -25,7 +25,7 @@ const Footer = () => {
               Sri Lanka's Chemistry Brand - Chemistry නම් Chemistry
             </p>
             <p className="text-gray-400 text-sm">
-              නදීක වර්ණකුල (Nadeeka Warnakula) - Advanced Level Chemistry Specialist
+              නදීක වර්ණකුල (NADEEKA Warnakula) - Advanced Level Chemistry Specialist
             </p>
           </div>
 

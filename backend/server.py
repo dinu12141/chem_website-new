@@ -654,7 +654,7 @@ async def get_stats():
         "total_courses": max(actual_courses, 12),    # Show at least 12+
         "total_announcements": max(actual_announcements, 3),  # Show at least 3+
         "platform_name": "SMARTCHEM",
-        "teacher": "නදීක වර්ණකුල (Nadeeka Warnakula)"
+        "teacher": "නදීක වර්ණකුල (NADEEKA Warnakula)"
     }
 
 async def initialize_sample_data():
@@ -666,7 +666,7 @@ async def initialize_sample_data():
     
     # Create teacher profile
     teacher = Teacher(
-        name="Nadeeka Warnakula",
+        name="NADEEKA Warnakula",
         name_sinhala="නදීක වර්ණකුල",
         qualifications=[
             "B.SC. ENGINEERING (HON'S) UNIVERSITY OF MORATUWA",

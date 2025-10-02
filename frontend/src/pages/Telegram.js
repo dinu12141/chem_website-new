@@ -89,7 +89,7 @@ const Telegram = () => {
     {
       icon: <Video className="w-6 h-6" />,
       title: 'Video Lessons',
-      description: 'High-quality recorded lessons from Nadeeka Sir'
+      description: 'High-quality recorded lessons from NADEEKA Sir'
     },
     {
       icon: <FileText className="w-6 h-6" />,
@@ -124,7 +124,7 @@ const Telegram = () => {
             Telegram Channels
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Join our Telegram channels for instant access to study materials, video lessons, and direct communication with Nadeeka Sir
+            Join our Telegram channels for instant access to study materials, video lessons, and direct communication with NADEEKA Sir
           </p>
         </div>
         </Reveal>

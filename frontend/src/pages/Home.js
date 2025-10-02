@@ -3,8 +3,6 @@ import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import { Card, CardContent } from '../components/ui/card';
 import { BookOpen, Users, Award, MessageCircle } from 'lucide-react';
-import ChemistryAnimations from '../components/ChemistryAnimations';
-import ElementBadges from '../components/ElementBadges';
 import axios from 'axios';
 import Reveal from '../components/Reveal';
 // Import the new Logo component
@@ -24,14 +22,11 @@ const Home = () => {
   const [stats, setStats] = useState(null);
   const [testimonials, setTestimonials] = useState([]);
   const [announcements, setAnnouncements] = useState([]);
-  const [bgReady, setBgReady] = useState(false);
-  const [heroReady, setHeroReady] = useState(false);
+  const [bgReady, setBgReady] = useState(true); // Changed to true to load immediately
+  const [heroReady, setHeroReady] = useState(true); // Changed to true to load immediately
 
   useEffect(() => {
-    // Staged hero load: background first, then content
-    const bgTimer = setTimeout(() => setBgReady(true), 50);
-    const heroTimer = setTimeout(() => setHeroReady(true), 700);
-    
+    // Removed staged loading - all elements load at once
     const fetchData = async () => {
       try {
         const [statsRes, testimonialsRes, announcementsRes] = await Promise.all([
@@ -49,10 +44,6 @@ const Home = () => {
     };
 
     fetchData();
-    return () => {
-      clearTimeout(bgTimer);
-      clearTimeout(heroTimer);
-    }
   }, []);
 
   return (
@@ -60,25 +51,60 @@ const Home = () => {
       {/* Hero Section with New Design */}
       <section className="relative min-h-screen flex items-center overflow-hidden bg-gray-900">
         {/* Geometric Wireframe Background */}
-        <div className={`absolute inset-0 z-0 ${bgReady ? 'hero-bg-in' : 'hero-bg-init'}`}>
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,165,0,0.05)_0%,rgba(0,0,0,0)_70%)]"></div>
+        <div className={`absolute inset-0 z-0 hero-bg-in`}>
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,rgba(255,165,0,0.15)_0%,rgba(0,0,0,0)_70%)]"></div>
           <div className="absolute inset-0" style={{
             backgroundImage: `
-              linear-gradient(rgba(255,165,0,0.03) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(255,165,0,0.03) 1px, transparent 1px)
+              linear-gradient(rgba(255,165,0,0.12) 1px, transparent 1px),
+              linear-gradient(90deg, rgba(255,165,0,0.12) 1px, transparent 1px)
             `,
-            backgroundSize: '40px 40px'
+            backgroundSize: '40px 40px',
+            filter: 'brightness(1.3)'
           }}></div>
           
-          {/* Geometric polygons */}
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 border border-yellow-900/20 rotate-45"></div>
-          <div className="absolute top-1/3 right-1/3 w-48 h-48 border border-yellow-900/20 rotate-12"></div>
-          <div className="absolute bottom-1/4 left-1/3 w-32 h-32 border border-yellow-900/20 rotate-45"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-40 h-40 border border-yellow-900/20 rotate-20"></div>
+          {/* Geometric polygons with enhanced lighting */}
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 border border-yellow-500/40 rotate-45 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow"></div>
+          <div className="absolute top-1/3 right-1/3 w-48 h-48 border border-yellow-500/40 rotate-12 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow"></div>
+          <div className="absolute bottom-1/4 left-1/3 w-32 h-32 border border-yellow-500/40 rotate-45 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow"></div>
+          <div className="absolute bottom-1/3 right-1/4 w-40 h-40 border border-yellow-500/40 rotate-20 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow"></div>
+          
+          {/* Additional background lighting accents */}
+          <div className="background-light-accent light-accent-1"></div>
+          <div className="background-light-accent light-accent-2"></div>
+          <div className="background-light-accent light-accent-3"></div>
+          
+          {/* Chemistry Element Animations */}
+          <div className="chemistry-element element-1">H</div>
+          <div className="chemistry-element element-2">O</div>
+          <div className="chemistry-element element-3">C</div>
+          <div className="chemistry-element element-4">N</div>
+          <div className="chemistry-element element-5">Na</div>
+          <div className="chemistry-element element-6">Cl</div>
+          <div className="chemistry-element element-7">Fe</div>
+          <div className="chemistry-element element-8">Cu</div>
+          <div className="chemistry-element element-9">Ag</div>
+          <div className="chemistry-element element-10">Au</div>
+          <div className="chemistry-element element-11">He</div>
+          <div className="chemistry-element element-12">Li</div>
+          <div className="chemistry-element element-13">Be</div>
+          <div className="chemistry-element element-14">B</div>
+          <div className="chemistry-element element-15">F</div>
+          <div className="chemistry-element element-16">Ne</div>
+          <div className="chemistry-element element-17">Mg</div>
+          <div className="chemistry-element element-18">Al</div>
+          <div className="chemistry-element element-19">Si</div>
+          <div className="chemistry-element element-20">P</div>
+          <div className="chemistry-element element-21">S</div>
+          <div className="chemistry-element element-22">K</div>
+          <div className="chemistry-element element-23">Ca</div>
+          <div className="chemistry-element element-24">Mn</div>
+          <div className="chemistry-element element-25">Zn</div>
+          <div className="chemistry-element element-26">Br</div>
+          <div className="chemistry-element element-27">I</div>
+          <div className="chemistry-element element-28">Kr</div>
+          <div className="chemistry-element element-29">Rb</div>
+          <div className="chemistry-element element-30">Sr</div>
         </div>
-        
-        {/* Chemistry Animations Layer */}
-        <ChemistryAnimations />
         
         {/* Animated Overlay */}
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/70 to-gray-900/90 z-10"></div>
@@ -86,37 +112,37 @@ const Home = () => {
         <div className="relative z-20 px-4 sm:px-6 lg:px-8 w-full">
           <div className="flex flex-col md:flex-row min-h-screen">
             {/* Left Side - Teacher Image Positioned to Left (Smaller) */}
-            <div className={`w-full md:w-1/2 flex items-center justify-start ${heroReady ? 'load-in' : 'load-init'}`} style={{ transitionDelay: '200ms' }}>
+            <div className={`w-full md:w-1/2 flex items-center justify-start load-in`}>
               <div className="relative w-full max-w-xl ml-0">
                 {/* Animated Orbs Around Teacher Image (Smaller) */}
-                <div className="absolute -top-16 -left-16 w-32 h-32 bg-yellow-500/20 rounded-full blur-2xl animate-pulse"></div>
-                <div className="absolute -bottom-16 left-16 w-40 h-40 bg-yellow-500/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
-                <div className="absolute top-1/3 left-24 w-24 h-24 bg-yellow-400/30 rounded-full blur-2xl animate-ping delay-2000"></div>
+                <div className="absolute -top-16 -left-16 w-32 h-32 bg-yellow-500/20 rounded-full blur-2xl animate-pulse shadow-[0_0_30px_rgba(251,191,36,0.4)] orb-pulse"></div>
+                <div className="absolute -bottom-16 left-16 w-40 h-40 bg-yellow-500/20 rounded-full blur-2xl animate-pulse delay-1000 shadow-[0_0_30px_rgba(251,191,36,0.4)] orb-pulse"></div>
+                <div className="absolute top-1/3 left-24 w-24 h-24 bg-yellow-400/30 rounded-full blur-2xl animate-ping delay-2000 shadow-[0_0_20px_rgba(251,191,36,0.6)] orb-pulse"></div>
                 
                 {/* Teacher Image Positioned to Left (Smaller) */}
                 <div className="relative overflow-visible [perspective:800px]">
                   <img 
                     src="/images/background.png" 
                     alt="Teacher" 
-                    className="w-full h-auto object-contain opacity-90 object-left"
+                    className="w-full h-auto object-contain opacity-90 object-left drop-shadow-[0_0_20px_rgba(251,191,36,0.3)] filter brightness-110"
                   />
-                  <ElementBadges />
                 </div>
               </div>
             </div>
             
             {/* Right Side - Logo, Name, and Buttons centered */}
-            <div className={`w-full md:w-1/2 flex flex-col items-center justify-center py-16 ${heroReady ? 'load-in' : 'load-init'}`} style={{ transitionDelay: '400ms' }}>
+            <div className={`w-full md:w-1/2 flex flex-col items-center justify-center py-16 load-in`}>
               {/* Logo positioned above the name */}
-              <div className="mb-8 flex justify-center">
+              <div className="mb-8 flex justify-center -mt-8">
                 <Logo />
               </div>
               
               {/* Name text centered below the logo */}
-              <div className="mb-12 text-center">
-                <h1 className="text-5xl md:text-7xl font-bold text-white mb-2 leading-tight">
-                  Nadeeka{' '}
-                  <span className="font-varella text-5xl md:text-7xl text-yellow-500" style={{ fontFamily: "'Varella Round', 'Segoe UI', sans-serif" }}>
+              <div className="mb-12 text-center mt-4 drop-shadow-[0_0_15px_rgba(251,191,36,0.3)] filter brightness-110 relative">
+                <div className="absolute inset-0 bg-yellow-500/10 rounded-2xl blur-xl -z-10"></div>
+                <h1 className="text-5xl md:text-7xl font-bold text-white mb-2 leading-tight drop-shadow-[0_0_10px_rgba(255,255,255,0.5)]">
+                  NADEEKA{' '}
+                  <span className="text-5xl md:text-7xl text-yellow-500 sinhala-text drop-shadow-[0_0_15px_rgba(251,191,36,0.4)]">
                     වර්ණකුල
                   </span>
                 </h1>
