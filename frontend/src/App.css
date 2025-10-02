@@ -1,0 +1,405 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  padding: 20px;
+  color: white;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Custom styles for SMARTCHEM */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Sinhala:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+/* Sinhala font styling for teacher name */
+.sinhala-text {
+  font-family: 'Noto Sans Sinhala', 'Inter', sans-serif;
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+/* Custom animation for black overlay */
+@keyframes fadeInOut {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 0.8; }
+}
+
+.animate-overlay {
+  animation: fadeInOut 3s ease-in-out infinite;
+}
+
+/* Enhanced button hover effects */
+.btn-enhanced {
+  transform: translateY(0);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.btn-enhanced:hover {
+  transform: translateY(-2px);
+}
+
+/* Logo styling */
+.smartchem-logo {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+/* Chemistry Animation Styles */
+.chemistry-animation {
+  position: absolute;
+  pointer-events: none;
+  color: rgba(247, 148, 29, 0.3);
+  font-weight: bold;
+  font-size: 18px;
+  z-index: 1;
+}
+
+/* Floating Chemical Formulas */
+@keyframes float1 {
+  0% { transform: translateY(100vh) translateX(-50px) rotate(0deg); opacity: 0; }
+  10% { opacity: 1; }
+  90% { opacity: 1; }
+  100% { transform: translateY(-100px) translateX(50px) rotate(360deg); opacity: 0; }
+}
+
+@keyframes float2 {
+  0% { transform: translateY(100vh) translateX(30px) rotate(0deg); opacity: 0; }
+  15% { opacity: 0.8; }
+  85% { opacity: 0.8; }
+  100% { transform: translateY(-100px) translateX(-30px) rotate(-360deg); opacity: 0; }
+}
+
+@keyframes float3 {
+  0% { transform: translateY(100vh) translateX(0px) rotate(0deg); opacity: 0; }
+  20% { opacity: 0.6; }
+  80% { opacity: 0.6; }
+  100% { transform: translateY(-100px) translateX(80px) rotate(180deg); opacity: 0; }
+}
+
+@keyframes float4 {
+  0% { transform: translateY(100vh) translateX(-80px) rotate(0deg); opacity: 0; }
+  25% { opacity: 0.9; }
+  75% { opacity: 0.9; }
+  100% { transform: translateY(-100px) translateX(20px) rotate(-180deg); opacity: 0; }
+}
+
+@keyframes float5 {
+  0% { transform: translateY(100vh) translateX(60px) rotate(0deg); opacity: 0; }
+  30% { opacity: 0.7; }
+  70% { opacity: 0.7; }
+  100% { transform: translateY(-100px) translateX(-60px) rotate(270deg); opacity: 0; }
+}
+
+.chemistry-formula-1 { animation: float1 15s infinite linear; animation-delay: 0s; }
+.chemistry-formula-2 { animation: float2 18s infinite linear; animation-delay: 3s; }
+.chemistry-formula-3 { animation: float3 20s infinite linear; animation-delay: 6s; }
+.chemistry-formula-4 { animation: float4 16s infinite linear; animation-delay: 9s; }
+.chemistry-formula-5 { animation: float5 22s infinite linear; animation-delay: 12s; }
+.chemistry-formula-6 { animation: float1 19s infinite linear; animation-delay: 15s; }
+.chemistry-formula-7 { animation: float2 17s infinite linear; animation-delay: 18s; }
+.chemistry-formula-8 { animation: float3 21s infinite linear; animation-delay: 21s; }
+
+/* Molecular Structure Animation */
+@keyframes moleculeRotate {
+  0% { transform: rotate(0deg) scale(1); }
+  25% { transform: rotate(90deg) scale(1.1); }
+  50% { transform: rotate(180deg) scale(1); }
+  75% { transform: rotate(270deg) scale(0.9); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+.molecule-animation {
+  position: absolute;
+  width: 60px;
+  height: 60px;
+  opacity: 0.2;
+  animation: moleculeRotate 25s infinite linear;
+  z-index: 1;
+}
+
+.molecule-1 { top: 20%; left: 15%; animation-delay: 0s; }
+.molecule-2 { top: 60%; right: 20%; animation-delay: 8s; }
+.molecule-3 { bottom: 30%; left: 25%; animation-delay: 16s; }
+
+/* Page Transition Animations */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateX(50px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateX(0);
+  transition: all 0.5s ease-in-out;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateX(-50px);
+  transition: all 0.3s ease-in-out;
+}
+
+/* Interactive Elements */
+@keyframes pulse-glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(247, 148, 29, 0.5); }
+  50% { box-shadow: 0 0 20px rgba(247, 148, 29, 0.8), 0 0 30px rgba(247, 148, 29, 0.6); }
+}
+
+.interactive-element {
+  animation: pulse-glow 2s infinite;
+}
+
+/* Particle System */
+@keyframes particle-float {
+  0% { 
+    transform: translateY(0) translateX(0) rotate(0deg); 
+    opacity: 0.8; 
+  }
+  50% { 
+    transform: translateY(-20px) translateX(10px) rotate(180deg); 
+    opacity: 1; 
+  }
+  100% { 
+    transform: translateY(-40px) translateX(-5px) rotate(360deg); 
+    opacity: 0.8; 
+  }
+}
+
+.particle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: linear-gradient(45deg, #F7941D, #F7941D);
+  border-radius: 50%;
+  animation: particle-float 6s infinite ease-in-out;
+}
+
+/* Smart Loading Animation */
+@keyframes smart-load {
+  0% { width: 0%; }
+  100% { width: 100%; }
+}
+
+.smart-loader {
+  height: 3px;
+  background: linear-gradient(90deg, #F7941D, #F7941D, #F7941D);
+  animation: smart-load 2s ease-in-out;
+}
+
+/* Hover Effects for Chemistry Elements */
+.chemistry-hover:hover {
+  color: rgba(247, 148, 29, 0.8) !important;
+  transform: scale(1.2);
+  text-shadow: 0 0 10px rgba(247, 148, 29, 0.6);
+  transition: all 0.3s ease;
+}
+
+/* Scroll Reveal Animations (on scroll) */
+.reveal-init {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.reveal-in {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 600ms ease, transform 600ms ease;
+}
+
+/* Mount load-in animations (on first paint) */
+.load-init {
+  opacity: 0;
+  transform: translateY(20px) scale(0.995);
+}
+.load-in {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  transition: opacity 700ms ease, transform 700ms ease;
+}
+
+/* Hero background staged entrance */
+.hero-bg-init {
+  opacity: 0;
+  transform: scale(1.02);
+}
+.hero-bg-in {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 800ms ease, transform 1200ms ease;
+}
+
+/* New Hero Section Styles */
+.hero-geometric-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: 
+    radial-gradient(ellipse at center, rgba(247, 148, 29, 0.05) 0%, rgba(0,0,0,0) 70%),
+    linear-gradient(rgba(247, 148, 29, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(247, 148, 29, 0.03) 1px, transparent 1px);
+  background-size: 100%, 40px 40px, 40px 40px;
+}
+
+.hero-gradient-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to right, rgba(17, 24, 39, 0.9) 0%, rgba(17, 24, 39, 0.7) 50%, rgba(17, 24, 39, 0.9) 100%);
+  z-index: 10;
+}
+
+/* Element Badges 3D atmospheric floating animations */
+@keyframes float-3d-drift {
+  0% { 
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); 
+    filter: brightness(1) blur(0px);
+  }
+  25% { 
+    transform: translate3d(-8px, -12px, 15px) rotateX(5deg) rotateY(-8deg) rotateZ(2deg); 
+    filter: brightness(1.2) blur(0.5px);
+  }
+  50% { 
+    transform: translate3d(6px, -20px, 25px) rotateX(-3deg) rotateY(12deg) rotateZ(-4deg); 
+    filter: brightness(1.4) blur(0px);
+  }
+  75% { 
+    transform: translate3d(12px, -8px, 10px) rotateX(8deg) rotateY(-5deg) rotateZ(6deg); 
+    filter: brightness(1.1) blur(0.3px);
+  }
+  100% { 
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); 
+    filter: brightness(1) blur(0px);
+  }
+}
+
+@keyframes float-3d-spiral {
+  0% { 
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); 
+    filter: brightness(1) blur(0px);
+  }
+  25% { 
+    transform: translate3d(10px, -6px, 20px) rotateX(-10deg) rotateY(15deg) rotateZ(90deg); 
+    filter: brightness(1.3) blur(0.2px);
+  }
+  50% { 
+    transform: translate3d(0, -15px, 30px) rotateX(5deg) rotateY(30deg) rotateZ(180deg); 
+    filter: brightness(1.5) blur(0px);
+  }
+  75% { 
+    transform: translate3d(-10px, -6px, 20px) rotateX(10deg) rotateY(45deg) rotateZ(270deg); 
+    filter: brightness(1.2) blur(0.4px);
+  }
+  100% { 
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(60deg) rotateZ(360deg); 
+    filter: brightness(1) blur(0px);
+  }
+}
+
+@keyframes float-3d-wave {
+  0% { 
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); 
+    filter: brightness(1) blur(0px);
+  }
+  20% { 
+    transform: translate3d(-5px, 8px, 12px) rotateX(12deg) rotateY(-6deg) rotateZ(-3deg); 
+    filter: brightness(1.1) blur(0.3px);
+  }
+  40% { 
+    transform: translate3d(8px, -4px, 22px) rotateX(-8deg) rotateY(10deg) rotateZ(5deg); 
+    filter: brightness(1.4) blur(0px);
+  }
+  60% { 
+    transform: translate3d(-3px, -12px, 18px) rotateX(6deg) rotateY(-12deg) rotateZ(-8deg); 
+    filter: brightness(1.3) blur(0.2px);
+  }
+  80% { 
+    transform: translate3d(6px, 4px, 8px) rotateX(-4deg) rotateY(8deg) rotateZ(3deg); 
+    filter: brightness(1.1) blur(0.4px);
+  }
+  100% { 
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); 
+    filter: brightness(1) blur(0px);
+  }
+}
+
+@keyframes float-3d-orbit {
+  0% { 
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg) rotateZ(0deg); 
+    filter: brightness(1) blur(0px);
+  }
+  25% { 
+    transform: translate3d(15px, -10px, 20px) rotateX(-15deg) rotateY(20deg) rotateZ(45deg); 
+    filter: brightness(1.3) blur(0.1px);
+  }
+  50% { 
+    transform: translate3d(0, -18px, 35px) rotateX(10deg) rotateY(40deg) rotateZ(90deg); 
+    filter: brightness(1.6) blur(0px);
+  }
+  75% { 
+    transform: translate3d(-15px, -10px, 20px) rotateX(15deg) rotateY(60deg) rotateZ(135deg); 
+    filter: brightness(1.2) blur(0.3px);
+  }
+  100% { 
+    transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(80deg) rotateZ(180deg); 
+    filter: brightness(1) blur(0px);
+  }
+}
+
+.animate-float-3d-drift { animation: float-3d-drift 8s ease-in-out infinite; }
+.animate-float-3d-spiral { animation: float-3d-spiral 10s ease-in-out infinite; }
+.animate-float-3d-wave { animation: float-3d-wave 7s ease-in-out infinite; }
+.animate-float-3d-orbit { animation: float-3d-orbit 9s ease-in-out infinite; }
+
+/* Distant Board Animation */
+@keyframes board-glow {
+  0% { 
+    filter: brightness(0.8) blur(1px);
+    transform: rotateX(12deg) rotateY(-3deg) translateZ(-100px) scale(0.95);
+  }
+  50% { 
+    filter: brightness(1.2) blur(0.5px);
+    transform: rotateX(12deg) rotateY(-3deg) translateZ(-95px) scale(1);
+  }
+  100% { 
+    filter: brightness(0.8) blur(1px);
+    transform: rotateX(12deg) rotateY(-3deg) translateZ(-100px) scale(0.95);
+  }
+}
+
+.animate-board-glow { 
+  animation: board-glow 4s ease-in-out infinite;
+  opacity: 0.7;
+}
