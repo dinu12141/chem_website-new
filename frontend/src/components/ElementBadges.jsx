@@ -28,10 +28,11 @@ export default function ElementBadges() {
     <div className="pointer-events-none absolute inset-0 -z-10">
       {/* Distant Board Container with N-pattern arrangement */}
       <div 
-        className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+        className="absolute top-1/2 transform -translate-y-1/2"
         style={{
           perspective: '1500px',
-          transformStyle: 'preserve-3d'
+          transformStyle: 'preserve-3d',
+          right: '10%'
         }}
       >
         {/* Board Background */}

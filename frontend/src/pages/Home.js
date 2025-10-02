@@ -7,6 +7,8 @@ import ChemistryAnimations from '../components/ChemistryAnimations';
 import ElementBadges from '../components/ElementBadges';
 import axios from 'axios';
 import Reveal from '../components/Reveal';
+// Import the new Logo component
+import Logo from '../components/Logo';
 // Import components for each section
 import OurStory from './OurStory';
 import Classes from './Classes';
@@ -82,16 +84,16 @@ const Home = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-gray-900/90 via-gray-900/70 to-gray-900/90 z-10"></div>
         
         <div className="relative z-20 px-4 sm:px-6 lg:px-8 w-full">
-          <div className="flex items-center min-h-screen">
-            {/* Left Side - Teacher Image Positioned to Left */}
+          <div className="flex flex-col md:flex-row min-h-screen">
+            {/* Left Side - Teacher Image Positioned to Left (Smaller) */}
             <div className={`w-full md:w-1/2 flex items-center justify-start ${heroReady ? 'load-in' : 'load-init'}`} style={{ transitionDelay: '200ms' }}>
-              <div className="relative w-full max-w-2xl ml-0">
-                {/* Animated Orbs Around Teacher Image */}
-                <div className="absolute -top-20 -left-20 w-48 h-48 bg-yellow-500/20 rounded-full blur-2xl animate-pulse"></div>
-                <div className="absolute -bottom-20 left-20 w-56 h-56 bg-yellow-500/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
-                <div className="absolute top-1/3 left-32 w-32 h-32 bg-yellow-400/30 rounded-full blur-2xl animate-ping delay-2000"></div>
+              <div className="relative w-full max-w-xl ml-0">
+                {/* Animated Orbs Around Teacher Image (Smaller) */}
+                <div className="absolute -top-16 -left-16 w-32 h-32 bg-yellow-500/20 rounded-full blur-2xl animate-pulse"></div>
+                <div className="absolute -bottom-16 left-16 w-40 h-40 bg-yellow-500/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
+                <div className="absolute top-1/3 left-24 w-24 h-24 bg-yellow-400/30 rounded-full blur-2xl animate-ping delay-2000"></div>
                 
-                {/* Teacher Image Positioned to Left */}
+                {/* Teacher Image Positioned to Left (Smaller) */}
                 <div className="relative overflow-visible [perspective:800px]">
                   <img 
                     src="/images/background.png" 
@@ -103,13 +105,18 @@ const Home = () => {
               </div>
             </div>
             
-            {/* Right Side - Text and Buttons */}
-            <div className={`w-full md:w-1/2 flex flex-col items-center justify-center pl-8 ${heroReady ? 'load-in' : 'load-init'}`} style={{ transitionDelay: '400ms' }}>
-              {/* Name in Larger Font */}
+            {/* Right Side - Logo, Name, and Buttons centered */}
+            <div className={`w-full md:w-1/2 flex flex-col items-center justify-center py-16 ${heroReady ? 'load-in' : 'load-init'}`} style={{ transitionDelay: '400ms' }}>
+              {/* Logo positioned above the name */}
+              <div className="mb-8 flex justify-center">
+                <Logo />
+              </div>
+              
+              {/* Name text centered below the logo */}
               <div className="mb-12 text-center">
-                <h1 className="text-6xl md:text-7xl font-bold text-white mb-4">
+                <h1 className="text-5xl md:text-7xl font-bold text-white mb-2 leading-tight">
                   Nadeeka{' '}
-                  <span className="font-vella text-6xl md:text-7xl text-yellow-500" style={{ fontFamily: "'Varella Round', 'Segoe UI', sans-serif" }}>
+                  <span className="font-varella text-5xl md:text-7xl text-yellow-500" style={{ fontFamily: "'Varella Round', 'Segoe UI', sans-serif" }}>
                     වර්ණකුල
                   </span>
                 </h1>
@@ -136,34 +143,44 @@ const Home = () => {
 
       {/* Stats Section */}
       {stats && (
-        <section className="py-16 bg-gray-800">
+        <section id="stats" className="py-16 bg-gray-800">
           <div className="px-4 sm:px-6 lg:px-8">
+            <Reveal delay={0}>
+              <div className="text-center mb-12">
+                <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+                  Our Achievements
+                </h2>
+                <p className="text-gray-400 text-lg">
+                  Building success through quality education
+                </p>
+              </div>
+            </Reveal>
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 text-center">
-              <Reveal delay={0}>
-                <div className="bg-gray-900 rounded-lg p-6">
-                  <Users className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-                  <div className="text-3xl font-bold text-white mb-2">{stats.total_students}+</div>
+              <Reveal delay={200}>
+                <div className="bg-gray-900 rounded-lg p-6 hover:bg-gray-800 transition-all duration-300 hover:scale-105">
+                  <Users className="w-12 h-12 text-yellow-500 mx-auto mb-4 animate-pulse" />
+                  <div className="text-3xl font-bold text-white mb-2 counter-animation">250+</div>
                   <div className="text-gray-400">Active Students</div>
                 </div>
               </Reveal>
-              <Reveal delay={100}>
-                <div className="bg-gray-900 rounded-lg p-6">
-                  <BookOpen className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-                  <div className="text-3xl font-bold text-white mb-2">{stats.total_courses}+</div>
+              <Reveal delay={400}>
+                <div className="bg-gray-900 rounded-lg p-6 hover:bg-gray-800 transition-all duration-300 hover:scale-105">
+                  <BookOpen className="w-12 h-12 text-yellow-500 mx-auto mb-4 animate-pulse" />
+                  <div className="text-3xl font-bold text-white mb-2 counter-animation">12+</div>
                   <div className="text-gray-400">Available Courses</div>
                 </div>
               </Reveal>
-              <Reveal delay={200}>
-                <div className="bg-gray-900 rounded-lg p-6">
-                  <Award className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-                  <div className="text-3xl font-bold text-white mb-2">7+</div>
+              <Reveal delay={600}>
+                <div className="bg-gray-900 rounded-lg p-6 hover:bg-gray-800 transition-all duration-300 hover:scale-105">
+                  <Award className="w-12 h-12 text-yellow-500 mx-auto mb-4 animate-pulse" />
+                  <div className="text-3xl font-bold text-white mb-2 counter-animation">7+</div>
                   <div className="text-gray-400">Years Experience</div>
                 </div>
               </Reveal>
-              <Reveal delay={300}>
-                <div className="bg-gray-900 rounded-lg p-6">
-                  <MessageCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4" />
-                  <div className="text-3xl font-bold text-white mb-2">{stats.total_announcements}+</div>
+              <Reveal delay={800}>
+                <div className="bg-gray-900 rounded-lg p-6 hover:bg-gray-800 transition-all duration-300 hover:scale-105">
+                  <MessageCircle className="w-12 h-12 text-yellow-500 mx-auto mb-4 animate-pulse" />
+                  <div className="text-3xl font-bold text-white mb-2 counter-animation">3+</div>
                   <div className="text-gray-400">Recent Updates</div>
                 </div>
               </Reveal>
