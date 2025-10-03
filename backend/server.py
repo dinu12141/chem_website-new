@@ -69,6 +69,7 @@ class User(BaseModel):
     full_name: str
     email: EmailStr
     phone_number: str
+    whatsapp_number: str = ""  # Add WhatsApp number field
     id_number: str
     al_year: str
     school_name: str
@@ -81,9 +82,12 @@ class UserCreate(BaseModel):
     full_name: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
     phone_number: str = Field(..., min_length=8, max_length=15)
+    whatsapp_number: str = Field(..., min_length=8, max_length=15)  # Add WhatsApp number field
     id_number: str = Field(..., min_length=9, max_length=12)
     al_year: str = Field(..., pattern="^(2024|2025|2026)$")
     school_name: str = Field(..., min_length=2, max_length=200)
+
+class UserCreateWithPassword(UserCreate):
     password: str = Field(..., min_length=6)
 
 class UserLogin(BaseModel):
@@ -95,6 +99,7 @@ class UserResponse(BaseModel):
     full_name: str
     email: str
     phone_number: str
+    whatsapp_number: str = ""  # Add WhatsApp number field
     id_number: str
     al_year: str
     school_name: str
@@ -270,6 +275,15 @@ async def register_user(user_data: UserCreate):
             logger.error(f"Database error while checking ID: {e}")
             raise HTTPException(status_code=500, detail="Database error. Please try again later.")
         
+        # Check if phone number already exists
+        try:
+            existing_phone = await db.users.find_one({"phone_number": user_data.phone_number})
+            if existing_phone:
+                raise HTTPException(status_code=400, detail="Phone number already registered")
+        except Exception as e:
+            logger.error(f"Database error while checking phone number: {e}")
+            raise HTTPException(status_code=500, detail="Database error. Please try again later.")
+        
         # Generate register number
         try:
             register_number = await generate_register_number(user_data.al_year)
@@ -283,6 +297,7 @@ async def register_user(user_data: UserCreate):
                 full_name=user_data.full_name,
                 email=user_data.email,
                 phone_number=user_data.phone_number,
+                whatsapp_number=user_data.whatsapp_number,  # Add WhatsApp number
                 id_number=user_data.id_number,
                 al_year=user_data.al_year,
                 school_name=user_data.school_name,
@@ -656,6 +671,14 @@ async def get_stats():
         "platform_name": "SMARTCHEM",
         "teacher": "නදීක වර්ණකුල (NADEEKA Warnakula)"
     }
+
+# User endpoints for admin
+@api_router.get("/admin/users", response_model=List[UserResponse])
+async def get_all_users():
+    """Get all users for admin dashboard"""
+    db_instance = check_db_connection()
+    users = await db_instance.users.find().to_list(1000)
+    return [UserResponse(**user) for user in users]
 
 async def initialize_sample_data():
     db_instance = check_db_connection()

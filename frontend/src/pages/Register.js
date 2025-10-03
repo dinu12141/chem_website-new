@@ -7,7 +7,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../components/ui/select';
 import { Alert, AlertDescription } from '../components/ui/alert';
-import { Loader2, User, Mail, Phone, CreditCard, GraduationCap, School, Lock, CheckCircle } from 'lucide-react';
+import { Loader2, User, Mail, Phone, CreditCard, GraduationCap, School, Lock, CheckCircle, Send, Eye, EyeOff } from 'lucide-react';
 import PageBackground from '../components/PageBackground';
 
 const Register = () => {
@@ -15,26 +15,124 @@ const Register = () => {
     fullName: '',
     email: '',
     phoneNumber: '',
+    whatsappNumber: '',
     idNumber: '',
     alYear: '',
     schoolName: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    otp: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(null);
   const [step, setStep] = useState(1);
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpVerified, setOtpVerified] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const { register } = useAuth();
   const navigate = useNavigate();
+
+  const handleSendOtp = async () => {
+    if (!formData.phoneNumber) {
+      setError('Please enter your phone number first');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    // Simulate sending OTP
+    setTimeout(() => {
+      setOtpSent(true);
+      setLoading(false);
+      // In a real app, you would send an actual OTP to the phone number
+      // For demo purposes, we'll just show a success message
+      alert(`OTP sent to ${formData.phoneNumber} (In a real app, an actual OTP would be sent)`);
+    }, 1500);
+  };
+
+  const handleVerifyOtp = async () => {
+    if (!formData.otp) {
+      setError('Please enter the OTP');
+      return;
+    }
+    
+    setLoading(true);
+    setError('');
+    
+    // Simulate OTP verification
+    setTimeout(() => {
+      // In a real app, you would verify the OTP with your backend
+      // For demo purposes, we'll just accept any non-empty OTP
+      setOtpVerified(true);
+      setLoading(false);
+    }, 1500);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError('');
 
-    // Validation
+    // Validation - Check if all fields are filled
+    if (!formData.fullName) {
+      setError('Please enter your full name');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.email) {
+      setError('Please enter your email address');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.phoneNumber) {
+      setError('Please enter your phone number');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.whatsappNumber) {
+      setError('Please enter your WhatsApp number');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.idNumber) {
+      setError('Please enter your ID number');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.alYear) {
+      setError('Please select your A/L year');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.schoolName) {
+      setError('Please enter your school name');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.password) {
+      setError('Please enter a password');
+      setLoading(false);
+      return;
+    }
+
+    if (!formData.confirmPassword) {
+      setError('Please confirm your password');
+      setLoading(false);
+      return;
+    }
+
+    // Additional validation
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
@@ -47,8 +145,8 @@ const Register = () => {
       return;
     }
 
-    if (!formData.alYear) {
-      setError('Please select your A/L year');
+    if (!otpVerified) {
+      setError('Please verify your phone number with OTP first');
       setLoading(false);
       return;
     }
@@ -58,6 +156,7 @@ const Register = () => {
       full_name: formData.fullName,
       email: formData.email,
       phone_number: formData.phoneNumber,
+      whatsapp_number: formData.whatsappNumber,
       id_number: formData.idNumber,
       al_year: formData.alYear,
       school_name: formData.schoolName,
@@ -163,213 +262,331 @@ const Register = () => {
           </p>
         </div>
 
-        <Card className="bg-gray-800 border-gray-700">
-          <CardHeader>
-            <CardTitle className="text-white text-center">Student Registration</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <form onSubmit={handleSubmit} className="space-y-6">
-              {error && (
-                <Alert className="border-red-500 bg-red-500/10">
-                  <AlertDescription className="text-red-500">
-                    {error}
-                  </AlertDescription>
-                </Alert>
-              )}
-
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Full Name */}
-                <div className="space-y-2">
-                  <Label htmlFor="fullName" className="text-white">
-                    Full Name <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      id="fullName"
-                      name="fullName"
-                      type="text"
-                      required
-                      value={formData.fullName}
-                      onChange={handleChange}
-                      placeholder="Enter your full name"
-                      className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                    />
-                  </div>
-                </div>
-
-                {/* Email */}
-                <div className="space-y-2">
-                  <Label htmlFor="email" className="text-white">
-                    Email Address <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      id="email"
-                      name="email"
-                      type="email"
-                      required
-                      value={formData.email}
-                      onChange={handleChange}
-                      placeholder="Enter your email"
-                      className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                    />
-                  </div>
-                </div>
-
-                {/* Phone Number */}
-                <div className="space-y-2">
-                  <Label htmlFor="phoneNumber" className="text-white">
-                    Phone Number <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      id="phoneNumber"
-                      name="phoneNumber"
-                      type="tel"
-                      required
-                      value={formData.phoneNumber}
-                      onChange={handleChange}
-                      placeholder="Enter your phone number"
-                      className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                    />
-                  </div>
-                </div>
-
-                {/* ID Number */}
-                <div className="space-y-2">
-                  <Label htmlFor="idNumber" className="text-white">
-                    National ID Number <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      id="idNumber"
-                      name="idNumber"
-                      type="text"
-                      required
-                      value={formData.idNumber}
-                      onChange={handleChange}
-                      placeholder="Enter your ID number"
-                      className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                    />
-                  </div>
-                </div>
-
-                {/* A/L Year */}
-                <div className="space-y-2">
-                  <Label htmlFor="alYear" className="text-white">
-                    A/L Year <span className="text-red-500">*</span>
-                  </Label>
-                  <Select onValueChange={handleSelectChange} required value={formData.alYear || ""}>
-                    <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-                      <div className="flex items-center">
-                        <GraduationCap className="w-4 h-4 mr-2 text-gray-400" />
-                        <SelectValue placeholder="Select your A/L year" />
-                      </div>
-                    </SelectTrigger>
-                    <SelectContent className="bg-gray-700 border-gray-600">
-                      <SelectItem value="2024" className="text-white hover:bg-gray-600">2024</SelectItem>
-                      <SelectItem value="2025" className="text-white hover:bg-gray-600">2025</SelectItem>
-                      <SelectItem value="2026" className="text-white hover:bg-gray-600">2026</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                {/* School Name */}
-                <div className="space-y-2">
-                  <Label htmlFor="schoolName" className="text-white">
-                    School Name <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <School className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      id="schoolName"
-                      name="schoolName"
-                      type="text"
-                      required
-                      value={formData.schoolName}
-                      onChange={handleChange}
-                      placeholder="Enter your school name"
-                      className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                    />
-                  </div>
-                </div>
-
-                {/* Password */}
-                <div className="space-y-2">
-                  <Label htmlFor="password" className="text-white">
-                    Password <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      id="password"
-                      name="password"
-                      type="password"
-                      required
-                      value={formData.password}
-                      onChange={handleChange}
-                      placeholder="Create a password"
-                      className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                    />
-                  </div>
-                </div>
-
-                {/* Confirm Password */}
-                <div className="space-y-2">
-                  <Label htmlFor="confirmPassword" className="text-white">
-                    Confirm Password <span className="text-red-500">*</span>
-                  </Label>
-                  <div className="relative">
-                    <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      required
-                      value={formData.confirmPassword}
-                      onChange={handleChange}
-                      placeholder="Confirm your password"
-                      className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
-                    />
-                  </div>
-                </div>
-              </div>
-
-              {/* Captcha Placeholder */}
-              <div className="bg-gray-700 rounded-lg p-4 text-center">
-                <p className="text-gray-400 text-sm">Captcha verification will be here</p>
-              </div>
-
-              <Button
-                type="submit"
-                disabled={loading}
-                className="w-full bg-orange-600 hover:bg-orange-700 text-white"
-              >
-                {loading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Creating Account...
-                  </>
-                ) : (
-                  'Create Account'
+        <Card className="bg-gray-800 border-gray-700 max-w-2xl mx-auto relative overflow-visible">
+          {/* Lighting effects around the box */}
+          <div className="absolute -inset-1 bg-yellow-500/20 rounded-xl blur-xl opacity-70 animate-pulse"></div>
+          <div className="absolute -inset-1 bg-orange-500/10 rounded-xl blur-2xl opacity-50"></div>
+          <div className="absolute -inset-0.5 bg-yellow-400/30 rounded-xl blur-lg opacity-40"></div>
+          <div className="relative bg-gray-800 border-gray-700 rounded-xl">
+            <CardHeader>
+              <CardTitle className="text-white text-center">Student Registration</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {error && (
+                  <Alert className="border-red-500 bg-red-500/10">
+                    <AlertDescription className="text-red-500">
+                      {error}
+                    </AlertDescription>
+                  </Alert>
                 )}
-              </Button>
-            </form>
 
-            <div className="mt-6 text-center text-gray-400">
-              <span>Already have an Account? </span>
-              <Link 
-                to="/login" 
-                className="text-orange-500 hover:text-orange-400 font-medium"
-              >
-                Sign in
-              </Link>
-            </div>
-          </CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  {/* Full Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="fullName" className="text-white">
+                      Full Name <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        id="fullName"
+                        name="fullName"
+                        type="text"
+                        required
+                        value={formData.fullName}
+                        onChange={handleChange}
+                        placeholder="Enter your full name"
+                        className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Email */}
+                  <div className="space-y-2">
+                    <Label htmlFor="email" className="text-white">
+                      Email Address <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Mail className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        id="email"
+                        name="email"
+                        type="email"
+                        required
+                        value={formData.email}
+                        onChange={handleChange}
+                        placeholder="Enter your email"
+                        className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Phone Number */}
+                  <div className="space-y-2">
+                    <Label htmlFor="phoneNumber" className="text-white">
+                      Phone Number <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        id="phoneNumber"
+                        name="phoneNumber"
+                        type="tel"
+                        required
+                        value={formData.phoneNumber}
+                        onChange={handleChange}
+                        placeholder="Enter your phone number"
+                        className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  {/* WhatsApp Number */}
+                  <div className="space-y-2">
+                    <Label htmlFor="whatsappNumber" className="text-white">
+                      WhatsApp Number <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Phone className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        id="whatsappNumber"
+                        name="whatsappNumber"
+                        type="tel"
+                        required
+                        value={formData.whatsappNumber}
+                        onChange={handleChange}
+                        placeholder="Enter your WhatsApp number"
+                        className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  {/* ID Number */}
+                  <div className="space-y-2">
+                    <Label htmlFor="idNumber" className="text-white">
+                      National ID Number <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <CreditCard className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        id="idNumber"
+                        name="idNumber"
+                        type="text"
+                        required
+                        value={formData.idNumber}
+                        onChange={handleChange}
+                        placeholder="Enter your ID number"
+                        className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  {/* A/L Year */}
+                  <div className="space-y-2">
+                    <Label htmlFor="alYear" className="text-white">
+                      A/L Year <span className="text-red-500">*</span>
+                    </Label>
+                    <Select onValueChange={handleSelectChange} required value={formData.alYear || ""}>
+                      <SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+                        <div className="flex items-center">
+                          <GraduationCap className="w-4 h-4 mr-2 text-gray-400" />
+                          <SelectValue placeholder="Select your A/L year" />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent className="bg-gray-700 border-gray-600">
+                        <SelectItem value="2024" className="text-white hover:bg-gray-600">2024</SelectItem>
+                        <SelectItem value="2025" className="text-white hover:bg-gray-600">2025</SelectItem>
+                        <SelectItem value="2026" className="text-white hover:bg-gray-600">2026</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {/* School Name */}
+                  <div className="space-y-2">
+                    <Label htmlFor="schoolName" className="text-white">
+                      School Name <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <School className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        id="schoolName"
+                        name="schoolName"
+                        type="text"
+                        required
+                        value={formData.schoolName}
+                        onChange={handleChange}
+                        placeholder="Enter your school name"
+                        className="pl-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      />
+                    </div>
+                  </div>
+
+                  {/* Password */}
+                  <div className="space-y-2">
+                    <Label htmlFor="password" className="text-white">
+                      Password <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        id="password"
+                        name="password"
+                        type={showPassword ? "text" : "password"}
+                        required
+                        value={formData.password}
+                        onChange={handleChange}
+                        placeholder="Create a password"
+                        className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {/* Confirm Password */}
+                  <div className="space-y-2">
+                    <Label htmlFor="confirmPassword" className="text-white">
+                      Confirm Password <span className="text-red-500">*</span>
+                    </Label>
+                    <div className="relative">
+                      <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                      <Input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type={showConfirmPassword ? "text" : "password"}
+                        required
+                        value={formData.confirmPassword}
+                        onChange={handleChange}
+                        placeholder="Confirm your password"
+                        className="pl-10 pr-10 bg-gray-700 border-gray-600 text-white placeholder-gray-400"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        className="absolute right-0 top-0 h-full px-3 text-gray-400 hover:text-white"
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                      >
+                        {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* OTP Verification Section */}
+                <div className="bg-gray-700 rounded-lg p-4">
+                  <h3 className="text-white font-medium mb-3">Phone Verification</h3>
+                  
+                  {error && otpSent && !otpVerified && (
+                    <Alert className="border-red-500 bg-red-500/10 mb-3">
+                      <AlertDescription className="text-red-500">
+                        {error}
+                      </AlertDescription>
+                    </Alert>
+                  )}
+                  
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label htmlFor="otp" className="text-white">
+                        Enter OTP <span className="text-red-500">*</span>
+                      </Label>
+                      <Input
+                        id="otp"
+                        name="otp"
+                        type="text"
+                        required
+                        disabled={!otpSent || otpVerified}
+                        value={formData.otp}
+                        onChange={handleChange}
+                        placeholder="Enter the 6-digit code"
+                        className="bg-gray-600 border-gray-500 text-white placeholder-gray-400"
+                      />
+                    </div>
+                    
+                    <div className="flex items-end space-x-2">
+                      <Button
+                        onClick={handleSendOtp}
+                        disabled={loading || otpSent || !formData.phoneNumber}
+                        className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
+                      >
+                        {loading && !otpSent ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Sending...
+                          </>
+                        ) : (
+                          <>
+                            <Send className="w-4 h-4 mr-2" />
+                            Send OTP
+                          </>
+                        )}
+                      </Button>
+                      
+                      {otpSent && !otpVerified && (
+                        <Button
+                          onClick={handleVerifyOtp}
+                          disabled={loading || otpVerified}
+                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
+                        >
+                          {loading ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Verifying...
+                            </>
+                          ) : (
+                            'Verify'
+                          )}
+                        </Button>
+                      )}
+                    </div>
+                  </div>
+                  
+                  {otpSent && (
+                    <div className="mt-2 text-sm text-gray-400">
+                      {otpVerified ? (
+                        <span className="text-green-500">✓ Phone number verified successfully</span>
+                      ) : (
+                        <span>OTP sent to {formData.phoneNumber}. Please check your messages.</span>
+                      )}
+                    </div>
+                  )}
+                </div>
+
+                <Button
+                  type="submit"
+                  disabled={loading || (otpSent && !otpVerified) || !formData.fullName || !formData.email || !formData.phoneNumber || !formData.whatsappNumber || !formData.idNumber || !formData.alYear || !formData.schoolName || !formData.password || !formData.confirmPassword}
+                  className="w-full bg-orange-600 hover:bg-orange-700 text-white"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                      Creating Account...
+                    </>
+                  ) : (
+                    'Create Account'
+                  )}
+                </Button>
+              </form>
+
+              <div className="mt-6 text-center text-gray-400">
+                <span>Already have an Account? </span>
+                <Link 
+                  to="/login" 
+                  className="text-orange-500 hover:text-orange-400 font-medium"
+                >
+                  Sign in
+                </Link>
+              </div>
+            </CardContent>
+          </div>
         </Card>
       </div>
     </div>

@@ -63,10 +63,34 @@ const Home = () => {
           }}></div>
           
           {/* Geometric polygons with enhanced lighting */}
-          <div className="absolute top-1/4 left-1/4 w-64 h-64 border border-yellow-500/40 rotate-45 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow"></div>
-          <div className="absolute top-1/3 right-1/3 w-48 h-48 border border-yellow-500/40 rotate-12 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow"></div>
-          <div className="absolute bottom-1/4 left-1/3 w-32 h-32 border border-yellow-500/40 rotate-45 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow"></div>
-          <div className="absolute bottom-1/3 right-1/4 w-40 h-40 border border-yellow-500/40 rotate-20 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow"></div>
+          <div className="absolute top-1/4 left-1/4 w-64 h-64 border border-yellow-500/40 rotate-45 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow">
+            {/* Orbiting particles around the first box frame */}
+            <div className="orbit-frame-particle orbit-frame-particle-1"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-2"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-3"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-4"></div>
+          </div>
+          <div className="absolute top-1/3 right-1/3 w-48 h-48 border border-yellow-500/40 rotate-12 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow">
+            {/* Orbiting particles around the second box frame */}
+            <div className="orbit-frame-particle orbit-frame-particle-1"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-2"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-3"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-4"></div>
+          </div>
+          <div className="absolute bottom-1/4 left-1/3 w-32 h-32 border border-yellow-500/40 rotate-45 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow">
+            {/* Orbiting particles around the third box frame */}
+            <div className="orbit-frame-particle orbit-frame-particle-1"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-2"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-3"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-4"></div>
+          </div>
+          <div className="absolute bottom-1/3 right-1/4 w-40 h-40 border border-yellow-500/40 rotate-20 shadow-[0_0_40px_rgba(251,191,36,0.5)] filter brightness-125 geometric-glow">
+            {/* Orbiting particles around the fourth box frame */}
+            <div className="orbit-frame-particle orbit-frame-particle-1"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-2"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-3"></div>
+            <div className="orbit-frame-particle orbit-frame-particle-4"></div>
+          </div>
           
           {/* Additional background lighting accents */}
           <div className="background-light-accent light-accent-1"></div>
