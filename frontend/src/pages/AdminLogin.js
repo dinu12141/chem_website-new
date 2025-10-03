@@ -8,6 +8,9 @@ import { Alert, AlertDescription } from '../components/ui/alert';
 import { Loader2, User, Lock } from 'lucide-react';
 import PageBackground from '../components/PageBackground';
 
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
+const API = `${BACKEND_URL}/api`;
+
 const AdminLogin = () => {
   const [credentials, setCredentials] = useState({
     username: '',
@@ -29,22 +32,39 @@ const AdminLogin = () => {
     setLoading(true);
     setError('');
 
-    // Simple admin authentication (in a real app, this would be done via backend)
-    if (credentials.username === 'admin' && credentials.password === 'smartchem2025') {
-      // Store admin status in localStorage
-      localStorage.setItem('isAdmin', 'true');
-      navigate('/admin');
-    } else {
-      setError('Invalid credentials');
+    try {
+      const response = await fetch(`${API}/auth/admin/login`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: credentials.username,
+          password: credentials.password
+        })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Store admin token in sessionStorage
+        sessionStorage.setItem('adminToken', data.access_token);
+        sessionStorage.setItem('isAdmin', 'true');
+        navigate('/admin');
+      } else {
+        setError(data.detail || 'Invalid admin credentials');
+      }
+    } catch (err) {
+      setError('Authentication failed. Please try again.');
+    } finally {
+      setLoading(false);
     }
-    
-    setLoading(false);
   };
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
       <PageBackground />
-      <div className="relative z-10">
+      <div className="relative z-10 w-full max-w-md">
         {/* Logo and Title */}
         <div className="text-center mb-8">
           <Link to="/">
@@ -74,7 +94,7 @@ const AdminLogin = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="username" className="text-white">
-                  Username
+                  Admin Username
                 </Label>
                 <div className="relative">
                   <User className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -93,7 +113,7 @@ const AdminLogin = () => {
 
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-white">
-                  Password
+                  Admin Password
                 </Label>
                 <div className="relative">
                   <Lock className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
@@ -118,7 +138,7 @@ const AdminLogin = () => {
                 {loading ? (
                   <>
                     <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                    Signing in...
+                    Authenticating...
                   </>
                 ) : (
                   'Sign In'
@@ -128,8 +148,7 @@ const AdminLogin = () => {
 
             <div className="mt-6 text-center">
               <p className="text-gray-500 text-sm">
-                Note: This is a demo admin panel. In a production environment, 
-                proper authentication would be implemented.
+                Enter your admin credentials to access the dashboard.
               </p>
             </div>
           </CardContent>

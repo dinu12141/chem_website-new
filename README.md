@@ -326,6 +326,20 @@ The platform has been thoroughly tested with:
 - ✅ API functionality
 - ✅ Database operations
 
+## 👤 Default Credentials
+
+### Student Credentials
+- Register as a new student using the registration form
+- Use your register number and password to login
+
+### Admin Credentials
+- **Username**: `admin`
+- **Password**: `smartchem2025`
+
+> ⚠️ **Important**: Change the default admin password immediately after first login for security.
+
+For more details about admin authentication, see [ADMIN_CREDENTIALS.md](ADMIN_CREDENTIALS.md)
+
 ## 📞 Support
 
 For technical support or questions:

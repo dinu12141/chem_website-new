@@ -14,7 +14,14 @@ import {
   BookOpen, 
   Calendar,
   Bell,
-  TrendingUp
+  TrendingUp,
+  Target,
+  Clock,
+  Award,
+  FileText,
+  Download,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 import axios from 'axios';
 import PageBackground from '../components/PageBackground';
@@ -28,6 +35,12 @@ const Dashboard = () => {
   const [announcements, setAnnouncements] = useState([]);
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [progressData, setProgressData] = useState({
+    completedLessons: 12,
+    totalLessons: 24,
+    upcomingExams: 3,
+    studyHours: 28
+  });
 
   useEffect(() => {
     if (isAuthenticated && user) {
@@ -64,6 +77,9 @@ const Dashboard = () => {
     );
   }
 
+  // Calculate progress percentage
+  const progressPercentage = Math.round((progressData.completedLessons / progressData.totalLessons) * 100);
+
   return (
     <div className="min-h-screen bg-gray-900 py-8 relative overflow-hidden">
       <PageBackground />
@@ -83,7 +99,7 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Student Profile Card */}
           <div className="lg:col-span-1">
-            <Card className="bg-gray-800 border-gray-700">
+            <Card className="bg-gray-800 border-gray-700 mb-6">
               <CardHeader>
                 <CardTitle className="text-white flex items-center">
                   <User className="w-5 h-5 mr-2 text-orange-500" />
@@ -135,20 +151,57 @@ const Dashboard = () => {
                 </div>
               </CardContent>
             </Card>
+
+            {/* Quick Actions */}
+            <Card className="bg-gray-800 border-gray-700">
+              <CardHeader>
+                <CardTitle className="text-white flex items-center">
+                  <Target className="w-5 h-5 mr-2 text-orange-500" />
+                  Quick Actions
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-3">
+                <Button className="w-full bg-orange-600 hover:bg-orange-700 text-white flex items-center justify-start">
+                  <BookOpen className="w-4 h-4 mr-2" />
+                  View Courses
+                </Button>
+                <Button variant="outline" className="w-full border-gray-600 text-gray-300 hover:bg-gray-700 flex items-center justify-start">
+                  <FileText className="w-4 h-4 mr-2" />
+                  Download Materials
+                </Button>
+                <Button variant="outline" className="w-full border-gray-600 text-gray-300 hover:bg-gray-700 flex items-center justify-start">
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Class Schedule
+                </Button>
+                <Button variant="outline" className="w-full border-gray-600 text-gray-300 hover:bg-gray-700 flex items-center justify-start">
+                  <Award className="w-4 h-4 mr-2" />
+                  My Achievements
+                </Button>
+              </CardContent>
+            </Card>
           </div>
 
           {/* Main Content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Statistics Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Progress Overview */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
               <Card className="bg-gray-800 border-gray-700">
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-400 text-sm">Available Courses</p>
-                      <p className="text-2xl font-bold text-white">{courses.length}</p>
+                      <p className="text-gray-400 text-sm">Completed Lessons</p>
+                      <p className="text-2xl font-bold text-white">{progressData.completedLessons}/{progressData.totalLessons}</p>
                     </div>
-                    <BookOpen className="w-8 h-8 text-orange-500" />
+                    <CheckCircle className="w-8 h-8 text-green-500" />
+                  </div>
+                  <div className="mt-4">
+                    <div className="w-full bg-gray-700 rounded-full h-2">
+                      <div 
+                        className="bg-green-500 h-2 rounded-full" 
+                        style={{ width: `${progressPercentage}%` }}
+                      ></div>
+                    </div>
+                    <p className="text-xs text-gray-500 mt-1">{progressPercentage}% Complete</p>
                   </div>
                 </CardContent>
               </Card>
@@ -157,10 +210,22 @@ const Dashboard = () => {
                 <CardContent className="p-6">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-400 text-sm">Announcements</p>
-                      <p className="text-2xl font-bold text-white">{announcements.length}</p>
+                      <p className="text-gray-400 text-sm">Study Hours</p>
+                      <p className="text-2xl font-bold text-white">{progressData.studyHours}</p>
                     </div>
-                    <Bell className="w-8 h-8 text-orange-500" />
+                    <Clock className="w-8 h-8 text-blue-500" />
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-gray-800 border-gray-700">
+                <CardContent className="p-6">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-gray-400 text-sm">Upcoming Exams</p>
+                      <p className="text-2xl font-bold text-white">{progressData.upcomingExams}</p>
+                    </div>
+                    <XCircle className="w-8 h-8 text-red-500" />
                   </div>
                 </CardContent>
               </Card>

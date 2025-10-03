@@ -107,11 +107,18 @@ const Navbar = () => {
                       </Button>
                     </div>
                   ) : (
-                    <Link to="/login">
-                    <Button className="bg-[#F7941D] hover:bg-[#dc7f12] text-white px-5 py-2 rounded-full">
-                        Student Login
-                      </Button>
-                    </Link>
+                    <div className="flex items-center space-x-2">
+                      <Link to="/student/login">
+                        <Button className="bg-[#F7941D] hover:bg-[#dc7f12] text-white px-4 py-2 rounded-full text-sm">
+                          Student Login
+                        </Button>
+                      </Link>
+                      <Link to="/admin/login">
+                        <Button variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900 px-4 py-2 rounded-full text-sm">
+                          Admin Login
+                        </Button>
+                      </Link>
+                    </div>
                   )}
                 </div>
               </div>
@@ -172,13 +179,22 @@ onClick={() => handleNavClick(item)}
                   </button>
                 </div>
               ) : (
-                <Link
-                  to="/login"
-                  onClick={() => setIsOpen(false)}
-                  className="block px-3 py-2 bg-yellow-600 text-white text-center rounded-md"
-                >
-                  Student Login
-                </Link>
+                <div className="space-y-2">
+                  <Link
+                    to="/student/login"
+                    onClick={() => setIsOpen(false)}
+                    className="block px-3 py-2 bg-yellow-600 text-white text-center rounded-md"
+                  >
+                    Student Login
+                  </Link>
+                  <Link
+                    to="/admin/login"
+                    onClick={() => setIsOpen(false)}
+                    className="block px-3 py-2 bg-gray-700 text-white text-center rounded-md"
+                  >
+                    Admin Login
+                  </Link>
+                </div>
               )}
             </div>
           </div>

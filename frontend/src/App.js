@@ -11,6 +11,7 @@ import Testimonials from './pages/Testimonials';
 import Telegram from './pages/Telegram';
 import Support from './pages/Support';
 import Login from './pages/Login';
+import StudentLogin from './pages/StudentLogin';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import Announcements from './pages/Announcements';
@@ -43,6 +44,7 @@ const AnimatedRoutes = () => {
                 <Route path="/telegram" element={<Telegram />} />
                 <Route path="/support" element={<Support />} />
                 <Route path="/login" element={<Login />} />
+                <Route path="/student/login" element={<StudentLogin />} />
                 <Route path="/register" element={<Register />} />
                 <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/announcements" element={<Announcements />} />

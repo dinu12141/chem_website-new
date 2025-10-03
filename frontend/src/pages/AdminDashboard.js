@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
@@ -20,7 +21,8 @@ import {
   Edit,
   Save,
   X,
-  Users
+  Users,
+  LogOut
 } from 'lucide-react';
 import axios from 'axios';
 import PageBackground from '../components/PageBackground';
@@ -29,6 +31,7 @@ const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const AdminDashboard = () => {
+  const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('messages');
   const [messages, setMessages] = useState([]);
   const [courses, setCourses] = useState([]);
@@ -57,8 +60,12 @@ const AdminDashboard = () => {
   const [editingTelegramChannel, setEditingTelegramChannel] = useState(null);
   const [editingVideoLesson, setEditingVideoLesson] = useState(null);
 
+  // Add admin info state
+  const [adminInfo, setAdminInfo] = useState(null);
+
   useEffect(() => {
     fetchData();
+    fetchAdminInfo();
   }, [activeTab]);
 
   const fetchData = async () => {
@@ -93,6 +100,38 @@ const AdminDashboard = () => {
       setError(`Failed to fetch ${activeTab}`);
     } finally {
       setLoading(false);
+    }
+  };
+
+  // Add function to fetch admin info
+  const fetchAdminInfo = async () => {
+    try {
+      const adminToken = sessionStorage.getItem('adminToken');
+      if (!adminToken) {
+        navigate('/admin/login');
+        return;
+      }
+
+      const response = await fetch(`${API}/auth/admin/me`, {
+        headers: {
+          'Authorization': `Bearer ${adminToken}`,
+        },
+      });
+
+      if (!response.ok) {
+        sessionStorage.removeItem('adminToken');
+        sessionStorage.removeItem('isAdmin');
+        navigate('/admin/login');
+        return;
+      }
+
+      const data = await response.json();
+      setAdminInfo(data);
+    } catch (error) {
+      console.error('Error fetching admin info:', error);
+      sessionStorage.removeItem('adminToken');
+      sessionStorage.removeItem('isAdmin');
+      navigate('/admin/login');
     }
   };
 
@@ -272,6 +311,30 @@ const AdminDashboard = () => {
     }
   };
 
+  // Update admin logout function
+  const handleAdminLogout = async () => {
+    try {
+      const adminToken = sessionStorage.getItem('adminToken');
+      if (adminToken) {
+        // Optionally call backend logout endpoint
+        await fetch(`${API}/auth/admin/logout`, {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${adminToken}`,
+          },
+        }).catch(() => {
+          // Ignore errors during logout
+        });
+      }
+    } finally {
+      // Clear admin session storage
+      sessionStorage.removeItem('isAdmin');
+      sessionStorage.removeItem('adminToken');
+      // Navigate to admin login page
+      navigate('/admin/login');
+    }
+  };
+
   if (loading && activeTab === 'messages') {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center relative overflow-hidden">
@@ -285,8 +348,26 @@ const AdminDashboard = () => {
     <div className="min-h-screen bg-gray-900 relative">
       <PageBackground />
       <div className="relative z-10 p-4 md:p-8">
+        <div className="flex justify-between items-center mb-6">
+          <div>
+            <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
+            {adminInfo && (
+              <p className="text-gray-400 mt-1">
+                Welcome, {adminInfo.username} ({adminInfo.email})
+              </p>
+            )}
+          </div>
+          <Button 
+            onClick={handleAdminLogout}
+            variant="outline"
+            className="flex items-center gap-2 border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+          >
+            <LogOut className="w-4 h-4" />
+            Logout
+          </Button>
+        </div>
+        
         <div className="max-w-7xl mx-auto">
-          <h1 className="text-3xl font-bold text-white mb-8">Admin Dashboard</h1>
           
           {/* Navigation Tabs */}
           <div className="flex flex-wrap gap-2 mb-8 border-b border-gray-700">

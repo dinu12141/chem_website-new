@@ -69,7 +69,7 @@ class User(BaseModel):
     full_name: str
     email: EmailStr
     phone_number: str
-    whatsapp_number: str = ""  # Add WhatsApp number field
+    whatsapp_number: str = ""
     id_number: str
     al_year: str
     school_name: str
@@ -78,14 +78,34 @@ class User(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
     is_active: bool = True
 
+# Add Admin model
+class Admin(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    username: str
+    email: EmailStr
+    password_hash: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_active: bool = True
+
 class UserCreate(BaseModel):
     full_name: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
     phone_number: str = Field(..., min_length=8, max_length=15)
-    whatsapp_number: str = Field(..., min_length=8, max_length=15)  # Add WhatsApp number field
+    whatsapp_number: str = Field(..., min_length=8, max_length=15)
     id_number: str = Field(..., min_length=9, max_length=12)
     al_year: str = Field(..., pattern="^(2024|2025|2026)$")
     school_name: str = Field(..., min_length=2, max_length=200)
+
+# Add AdminCreate model
+class AdminCreate(BaseModel):
+    username: str = Field(..., min_length=3, max_length=50)
+    email: EmailStr
+    password: str = Field(..., min_length=6)
+
+# Add AdminLogin model
+class AdminLogin(BaseModel):
+    username: str
+    password: str
 
 class UserCreateWithPassword(UserCreate):
     password: str = Field(..., min_length=6)
@@ -99,7 +119,7 @@ class UserResponse(BaseModel):
     full_name: str
     email: str
     phone_number: str
-    whatsapp_number: str = ""  # Add WhatsApp number field
+    whatsapp_number: str = ""
     id_number: str
     al_year: str
     school_name: str
@@ -107,10 +127,24 @@ class UserResponse(BaseModel):
     created_at: datetime
     is_active: bool
 
+# Add AdminResponse model
+class AdminResponse(BaseModel):
+    id: str
+    username: str
+    email: str
+    created_at: datetime
+    is_active: bool
+
 class Token(BaseModel):
     access_token: str
     token_type: str
     user: UserResponse
+
+# Add AdminToken model
+class AdminToken(BaseModel):
+    access_token: str
+    token_type: str
+    admin: AdminResponse
 
 class Teacher(BaseModel):
     id: str = Field(default_factory=lambda: str(uuid.uuid4()))
@@ -249,9 +283,37 @@ async def get_current_user(credentials: HTTPAuthorizationCredentials = Depends(s
         logger.error(f"Database error while fetching user: {e}")
         raise HTTPException(status_code=500, detail="Database error. Please try again later.")
 
+# Add get_current_admin function
+async def get_current_admin(credentials: HTTPAuthorizationCredentials = Depends(security)):
+    db_instance = check_db_connection()
+    credentials_exception = HTTPException(
+        status_code=status.HTTP_401_UNAUTHORIZED,
+        detail="Could not validate admin credentials",
+        headers={"WWW-Authenticate": "Bearer"},
+    )
+    try:
+        payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
+        # Check if this is an admin token
+        if not payload.get("admin", False):
+            raise credentials_exception
+        admin_id: str = payload.get("sub", "")
+        if admin_id is None or admin_id == "":
+            raise credentials_exception
+    except JWTError:
+        raise credentials_exception
+    
+    try:
+        admin = await db_instance.admins.find_one({"id": admin_id})
+        if admin is None:
+            raise credentials_exception
+        return Admin(**admin)
+    except Exception as e:
+        logger.error(f"Database error while fetching admin: {e}")
+        raise HTTPException(status_code=500, detail="Database error. Please try again later.")
+
 # Authentication endpoints
 @api_router.post("/auth/register", response_model=dict)
-async def register_user(user_data: UserCreate):
+async def register_user(user_data: UserCreateWithPassword):
     # Check if database is available
     if db is None:
         raise HTTPException(status_code=500, detail="Database connection unavailable. Please contact administrator.")
@@ -787,6 +849,141 @@ async def initialize_sample_data():
         await db_instance.announcements.insert_one(announcement.dict())
     
     return {"message": "Sample data initialized successfully"}
+
+# Add function to initialize admin user
+async def initialize_admin_user():
+    """Initialize default admin user if none exists"""
+    db_instance = check_db_connection()
+    
+    # Check if any admin exists
+    existing_admin = await db_instance.admins.find_one({})
+    if existing_admin:
+        return {"message": "Admin user already exists"}
+    
+    # Create default admin user
+    import os
+    from passlib.context import CryptContext
+    
+    pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+    
+    admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
+    admin_email = os.environ.get('ADMIN_EMAIL', 'admin@smartchem.lk')
+    admin_password = os.environ.get('ADMIN_PASSWORD', 'smartchem2025')
+    
+    admin = Admin(
+        username=admin_username,
+        email=admin_email,
+        password_hash=pwd_context.hash(admin_password),
+        is_active=True
+    )
+    
+    result = await db_instance.admins.insert_one(admin.dict())
+    if result.inserted_id:
+        return {
+            "message": "Default admin user created",
+            "username": admin_username,
+            "password": admin_password
+        }
+    else:
+        return {"message": "Failed to create default admin user"}
+
+# Update the main app startup to initialize both sample data and admin
+@app.on_event("startup")
+async def startup_event():
+    """Initialize database with sample data and admin user"""
+    try:
+        # Initialize sample data
+        result = await initialize_sample_data()
+        print(result["message"])
+        
+        # Initialize admin user
+        admin_result = await initialize_admin_user()
+        print(admin_result["message"])
+        
+        if "username" in admin_result:
+            print(f"Admin credentials - Username: {admin_result['username']}, Password: {admin_result['password']}")
+            print("Please change the default password after first login!")
+    except Exception as e:
+        print(f"Error during startup initialization: {e}")
+
+# Admin Authentication endpoints
+@api_router.post("/auth/admin/register", response_model=dict)
+async def register_admin(admin_data: AdminCreate):
+    """Register a new admin user (for initial setup)"""
+    db_instance = check_db_connection()
+    
+    try:
+        # Check if username already exists
+        existing_admin = await db_instance.admins.find_one({"username": admin_data.username})
+        if existing_admin:
+            raise HTTPException(status_code=400, detail="Username already exists")
+        
+        # Check if email already exists
+        existing_email = await db_instance.admins.find_one({"email": admin_data.email})
+        if existing_email:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        
+        # Create admin
+        admin = Admin(
+            username=admin_data.username,
+            email=admin_data.email,
+            password_hash=get_password_hash(admin_data.password)
+        )
+        
+        result = await db_instance.admins.insert_one(admin.dict())
+        if not result.inserted_id:
+            raise HTTPException(status_code=500, detail="Failed to create admin")
+        
+        logger.info(f"Admin registered successfully: {admin.username}")
+        
+        return {
+            "message": "Admin registered successfully",
+            "admin_id": admin.id
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Admin registration error: {str(e)}")
+        raise HTTPException(status_code=500, detail="Admin registration failed")
+
+@api_router.post("/auth/admin/login", response_model=AdminToken)
+async def login_admin(admin_credentials: AdminLogin):
+    """Authenticate admin user"""
+    db_instance = check_db_connection()
+    
+    admin = await db_instance.admins.find_one({"username": admin_credentials.username})
+    if not admin or not verify_password(admin_credentials.password, admin["password_hash"]):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect username or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    access_token = create_access_token(
+        data={"sub": admin["id"], "admin": True}, expires_delta=access_token_expires
+    )
+    
+    admin_response = AdminResponse(**admin)
+    
+    return {
+        "access_token": access_token,
+        "token_type": "bearer",
+        "admin": admin_response
+    }
+
+@api_router.get("/auth/admin/me", response_model=AdminResponse)
+async def get_current_admin_info(current_admin: Admin = Depends(get_current_admin)):
+    """Get current admin info"""
+    return AdminResponse(**current_admin.dict())
+
+# Add admin logout endpoint
+@api_router.post("/auth/admin/logout", response_model=dict)
+async def logout_admin(current_admin: Admin = Depends(get_current_admin)):
+    """Logout admin user (invalidate token on client side)"""
+    # In a real application, you might want to add token to a blacklist
+    # For now, we just return success
+    return {"message": "Successfully logged out"}
 
 # Include router
 app.include_router(api_router)
