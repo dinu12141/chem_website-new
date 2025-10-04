@@ -1,7 +1,7 @@
 @echo off
-title SMARTCHEM Application
+title Nadeeka Warnakula Application
 echo ====================================================
-echo            SMARTCHEM - Chemistry Learning Platform
+echo            Nadeeka Warnakula - Chemistry Learning Platform
 echo ====================================================
 echo.
 
@@ -35,7 +35,7 @@ if %errorlevel% neq 0 (
 )
 
 echo.
-echo Starting SMARTCHEM Application...
+echo Starting Nadeeka Warnakula Application...
 echo.
 echo Backend URL: http://localhost:8000
 echo Frontend URL: http://localhost:3000

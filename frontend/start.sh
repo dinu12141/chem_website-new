@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# SMARTCHEM Frontend Startup Script
-echo "Starting SMARTCHEM Frontend Application..."
+# Nadeeka Warnakula Frontend Startup Script
+echo "Starting Nadeeka Warnakula Frontend Application..."
 
 # Load environment variables
 if [ -f .env ]; then

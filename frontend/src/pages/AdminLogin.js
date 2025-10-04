@@ -6,15 +6,15 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Alert, AlertDescription } from '../components/ui/alert';
 import { Loader2, User, Lock } from 'lucide-react';
-import PageBackground from '../components/PageBackground';
+// PageBackground import removed as requested
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
 
 const AdminLogin = () => {
   const [credentials, setCredentials] = useState({
-    username: '',
-    password: ''
+    username: 'admin',
+    password: 'nadeeka2025'
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -50,7 +50,10 @@ const AdminLogin = () => {
         // Store admin token in sessionStorage
         sessionStorage.setItem('adminToken', data.access_token);
         sessionStorage.setItem('isAdmin', 'true');
-        navigate('/admin');
+        // Force a small delay to ensure storage is complete
+        setTimeout(() => {
+          navigate('/admin');
+        }, 100);
       } else {
         setError(data.detail || 'Invalid admin credentials');
       }
@@ -63,14 +66,14 @@ const AdminLogin = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
-      <PageBackground />
+      {/* PageBackground component removed as requested */}
       <div className="relative z-10 w-full max-w-md">
         {/* Logo and Title */}
         <div className="text-center mb-8">
           <Link to="/">
             <img 
               src="/images/logo.png" 
-              alt="SMARTCHEM Logo" 
+              alt="Nadeeka Warnakula Logo" 
               className="h-16 w-auto mx-auto mb-4 cursor-pointer"
             />
           </Link>
@@ -148,7 +151,7 @@ const AdminLogin = () => {
 
             <div className="mt-6 text-center">
               <p className="text-gray-500 text-sm">
-                Enter your admin credentials to access the dashboard.
+                Default credentials: admin / nadeeka2025
               </p>
             </div>
           </CardContent>

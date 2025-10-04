@@ -98,7 +98,7 @@ const Support = () => {
             Support
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            We're here to help! Get assistance with classes, technical support, or any questions about SMARTCHEM
+            We're here to help! Get assistance with classes, technical support, or any questions about Nadeeka Warnakula
           </p>
         </div>
         </Reveal>
@@ -130,8 +130,8 @@ const Support = () => {
                   </div>
                   <div>
                     <h3 className="text-white font-semibold">Email</h3>
-                    <a href="mailto:smartchem@gmail.com" className="text-orange-500 hover:text-orange-400">
-                      smartchem@gmail.com
+                    <a href="mailto:nadeeka.warnakula@gmail.com" className="text-orange-500 hover:text-orange-400">
+                      nadeeka.warnakula@gmail.com
                     </a>
                   </div>
                 </div>
@@ -173,7 +173,7 @@ const Support = () => {
                   </Button>
                 </a>
                 
-                <a href="mailto:smartchem@gmail.com">
+                <a href="mailto:nadeeka.warnakula@gmail.com">
                   <Button variant="outline" className="w-full border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white justify-start">
                     <Mail className="w-4 h-4 mr-2" />
                     Send Email

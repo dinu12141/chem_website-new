@@ -1,11 +1,11 @@
-# SMARTCHEM Admin Credentials
+# Nadeeka Warnakula Admin Credentials
 
 ## Default Admin Account
 
 After initializing the application, a default admin account will be created automatically:
 
 - **Username**: `admin`
-- **Password**: `smartchem2025`
+- **Password**: `nadeeka2025`
 
 ## How Admin Authentication Works
 
@@ -60,7 +60,7 @@ ADMIN_PASSWORD=your_secure_password
 1. Navigate to `/admin/login`
 2. Enter the default credentials:
    - Username: `admin`
-   - Password: `smartchem2025`
+   - Password: `nadeeka2025`
 3. Click "Sign In"
 4. You will be redirected to the Admin Dashboard
 5. **Important**: Change the default password immediately after first login

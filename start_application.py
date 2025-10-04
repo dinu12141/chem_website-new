@@ -5,7 +5,7 @@ import time
 from check_mongodb import check_mongodb
 
 def start_application():
-    print("🚀 Starting SMARTCHEM Application")
+    print("🚀 Starting Nadeeka Warnakula Application")
     print("=" * 40)
     
     # Check MongoDB first
@@ -63,7 +63,7 @@ def start_application():
         return False
     
     print("\n" + "=" * 40)
-    print("🎉 SMARTCHEM Application is now running!")
+    print("🎉 Nadeeka Warnakula Application is now running!")
     print("   Backend: http://localhost:8000")
     print("   Frontend: http://localhost:3000")
     print("   API Docs: http://localhost:8000/docs")

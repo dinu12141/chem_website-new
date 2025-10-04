@@ -58,7 +58,7 @@ const Testimonials = () => {
             Testimonials
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto mb-8">
-            See what our students say about their success journey with SMARTCHEM
+            See what our students say about their success journey with Nadeeka Warnakula
           </p>
           <div className="flex justify-center items-center space-x-6 text-orange-500">
             <div className="text-center">
@@ -181,11 +181,11 @@ const Testimonials = () => {
                 Want to Share Your Success Story?
               </h2>
               <p className="text-gray-400 mb-6">
-                If you're a SMARTCHEM student who achieved great results, we'd love to hear from you!
+                If you're a Nadeeka Warnakula student who achieved great results, we'd love to hear from you!
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <a 
-                  href="mailto:smartchem@gmail.com" 
+                  href="mailto:nadeeka.warnakula@gmail.com" 
                   className="bg-orange-600 hover:bg-orange-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
                 >
                   Share Your Story
@@ -194,7 +194,7 @@ const Testimonials = () => {
                   href="/register" 
                   className="border border-orange-500 text-orange-500 hover:bg-orange-500 hover:text-white px-6 py-3 rounded-lg font-medium transition-colors"
                 >
-                  Join SMARTCHEM
+                  Join Nadeeka Warnakula
                 </a>
               </div>
             </CardContent>

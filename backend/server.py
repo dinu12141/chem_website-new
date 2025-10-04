@@ -31,13 +31,13 @@ db = None
 
 try:
     client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=5000)
-    db = client[os.environ.get('DB_NAME', 'smartchem')]
+    db = client[os.environ.get('DB_NAME', 'nadeeka_warnakula')]
     logger.info(f"Connected to MongoDB at {mongo_url}")
 except Exception as e:
     logger.error(f"Failed to connect to MongoDB: {e}")
 
 # Security
-SECRET_KEY = os.environ.get('SECRET_KEY', "smartchem_secret_key_2024_nadeeka_warnakula")
+SECRET_KEY = os.environ.get('SECRET_KEY', "nadeeka_warnakula_secret_key_2024_nadeeka_warnakula")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get('ACCESS_TOKEN_EXPIRE_MINUTES', 30 * 24 * 60))  # 30 days
 
@@ -45,7 +45,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
 # Create the main app
-app = FastAPI(title="SMARTCHEM API", version="1.0.0")
+app = FastAPI(title="Nadeeka Warnakula API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
 
 # CORS middleware
@@ -716,7 +716,7 @@ async def delete_video_lesson(lesson_id: str):
 # General endpoints
 @api_router.get("/")
 async def root():
-    return {"message": "SMARTCHEM API - නදීක වර්ණකුල Chemistry Platform"}
+    return {"message": "Nadeeka Warnakula API - නදීක වර්ණකුල Chemistry Platform"}
 
 @api_router.get("/stats")
 async def get_stats():
@@ -730,7 +730,7 @@ async def get_stats():
         "total_students": max(actual_students, 250),  # Show at least 250+
         "total_courses": max(actual_courses, 12),    # Show at least 12+
         "total_announcements": max(actual_announcements, 3),  # Show at least 3+
-        "platform_name": "SMARTCHEM",
+        "platform_name": "Nadeeka Warnakula",
         "teacher": "නදීක වර්ණකුල (NADEEKA Warnakula)"
     }
 
@@ -867,8 +867,8 @@ async def initialize_admin_user():
     pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
     
     admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
-    admin_email = os.environ.get('ADMIN_EMAIL', 'admin@smartchem.lk')
-    admin_password = os.environ.get('ADMIN_PASSWORD', 'smartchem2025')
+    admin_email = os.environ.get('ADMIN_EMAIL', 'admin@nadeeka-warnakula.lk')
+    admin_password = os.environ.get('ADMIN_PASSWORD', 'nadeeka2025')
     
     admin = Admin(
         username=admin_username,
@@ -984,6 +984,34 @@ async def logout_admin(current_admin: Admin = Depends(get_current_admin)):
     # In a real application, you might want to add token to a blacklist
     # For now, we just return success
     return {"message": "Successfully logged out"}
+
+# Add endpoint to get all admins (for admin management)
+@api_router.get("/auth/admin/admins", response_model=List[AdminResponse])
+async def get_all_admins(current_admin: Admin = Depends(get_current_admin)):
+    """Get all admins for admin dashboard"""
+    db_instance = check_db_connection()
+    admins = await db_instance.admins.find().to_list(1000)
+    return [AdminResponse(**admin) for admin in admins]
+
+# Add endpoint to delete an admin
+@api_router.delete("/auth/admin/admins/{admin_id}", response_model=dict)
+async def delete_admin(admin_id: str, current_admin: Admin = Depends(get_current_admin)):
+    """Delete an admin user"""
+    db_instance = check_db_connection()
+    
+    # Prevent admin from deleting themselves
+    if current_admin.id == admin_id:
+        raise HTTPException(status_code=400, detail="You cannot delete yourself")
+    
+    # Prevent deletion of the last admin
+    admin_count = await db_instance.admins.count_documents({})
+    if admin_count <= 1:
+        raise HTTPException(status_code=400, detail="Cannot delete the last admin user")
+    
+    result = await db_instance.admins.delete_one({"id": admin_id})
+    if result.deleted_count == 0:
+        raise HTTPException(status_code=404, detail="Admin not found")
+    return {"message": "Admin deleted successfully"}
 
 # Include router
 app.include_router(api_router)

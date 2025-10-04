@@ -22,7 +22,7 @@ def test_admin_login():
     # Default admin credentials
     admin_credentials = {
         "username": os.environ.get('ADMIN_USERNAME', 'admin'),
-        "password": os.environ.get('ADMIN_PASSWORD', 'smartchem2025')
+        "password": os.environ.get('ADMIN_PASSWORD', 'nadeeka2025')
     }
     
     print(f"Testing admin login at {API_URL}/auth/admin/login")
@@ -54,7 +54,7 @@ def test_admin_login():
         return False
 
 if __name__ == "__main__":
-    print("=== SMARTCHEM Admin Login Test ===")
+    print("=== Nadeeka Warnakula Admin Login Test ===")
     success = test_admin_login()
     if success:
         print("\n✅ Admin login test passed!")

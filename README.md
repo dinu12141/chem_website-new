@@ -1,4 +1,4 @@
-# SMARTCHEM - Chemistry Learning Platform
+# Nadeeka Warnakula - Chemistry Learning Platform
 
 ## Prerequisites
 
@@ -67,7 +67,7 @@ This usually happens when MongoDB is not running. Check:
 
 1. MongoDB is installed and running
 2. The backend can connect to MongoDB (check backend logs)
-3. The database "smartchem" is accessible
+3. The database "nadeeka_warnakula" is accessible
 
 ### Database Connection Issues
 
@@ -124,11 +124,11 @@ For issues with the application:
 2. Verify all prerequisites are installed and running
 3. Refer to the troubleshooting section above
 
-# SMARTCHEM Platform 🧪
+# Nadeeka Warnakula 🧪
 
 **නදීක වර්ණකුල Chemistry Learning Platform**
 
-A comprehensive educational platform for Advanced Level Chemistry students in Sri Lanka, featuring modern web technologies and professional design.
+Advanced Level Chemistry education platform by Nadeeka Warnakula for Sri Lankan students, featuring modern web technologies and professional design.
 
 ## ✨ Features
 
@@ -148,7 +148,7 @@ A comprehensive educational platform for Advanced Level Chemistry students in Sr
 ```bash
 # Clone and deploy in one command
 git clone <repository-url>
-cd smartchem-platform
+cd nadeeka-warnakula
 ./deploy.sh start
 ```
 
@@ -176,7 +176,7 @@ yarn start
 ## 📁 Project Structure
 
 ```
-smartchem-platform/
+nadeeka-warnakula/
 ├── 🔧 backend/              # FastAPI Backend
 │   ├── server.py           # Main API server
 │   ├── requirements.txt    # Python dependencies
@@ -240,7 +240,7 @@ smartchem-platform/
 **Backend** (`.env`):
 ```env
 MONGO_URL=mongodb://localhost:27017
-DB_NAME=smartchem
+DB_NAME=nadeeka_warnakula
 SECRET_KEY=your-secret-key
 CORS_ORIGINS=http://localhost:3000
 ```
@@ -334,7 +334,7 @@ The platform has been thoroughly tested with:
 
 ### Admin Credentials
 - **Username**: `admin`
-- **Password**: `smartchem2025`
+- **Password**: `nadeeka2025`
 
 > ⚠️ **Important**: Change the default admin password immediately after first login for security.
 
@@ -349,7 +349,7 @@ For technical support or questions:
 
 ## 🏆 Success Metrics
 
-The SMARTCHEM platform has achieved:
+The Nadeeka Warnakula platform has achieved:
 - ✅ **100% Feature Completion** - All requirements implemented
 - ✅ **Professional Design** - pb.lk style homepage
 - ✅ **Mobile Responsive** - Works on all devices
@@ -360,7 +360,7 @@ The SMARTCHEM platform has achieved:
 
 ## 🎉 Ready for Hosting!
 
-The SMARTCHEM platform is now **100% ready for hosting** with:
+The Nadeeka Warnakula platform is now **100% ready for hosting** with:
 
 - 🐳 **Docker containerization** for easy deployment
 - 🚀 **Automated deployment scripts** for one-command setup

@@ -31,13 +31,13 @@ db = None
 
 try:
     client = AsyncIOMotorClient(mongo_url, serverSelectionTimeoutMS=5000)
-    db = client[os.environ.get('DB_NAME', 'smartchem')]
+    db = client[os.environ.get('DB_NAME', 'nadeeka_warnakula')]
     logger.info(f"Connected to MongoDB at {mongo_url}")
 except Exception as e:
     logger.error(f"Failed to connect to MongoDB: {e}")
 
 # Security
-SECRET_KEY = os.environ.get('SECRET_KEY', "smartchem_secret_key_2024_nadeeka_warnakula")
+SECRET_KEY = os.environ.get('SECRET_KEY', "nadeeka_warnakula_secret_key_2024_nadeeka_warnakula")
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get('ACCESS_TOKEN_EXPIRE_MINUTES', 30 * 24 * 60))  # 30 days
 
@@ -45,7 +45,7 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 security = HTTPBearer()
 
 # Create the main app
-app = FastAPI(title="SMARTCHEM API", version="1.0.0")
+app = FastAPI(title="Nadeeka Warnakula API", version="1.0.0")
 api_router = APIRouter(prefix="/api")
 
 # CORS middleware
@@ -639,7 +639,7 @@ async def delete_video_lesson(lesson_id: str):
 # General endpoints
 @api_router.get("/")
 async def root():
-    return {"message": "SMARTCHEM API - නදීක වර්ණකුල Chemistry Platform"}
+    return {"message": "Nadeeka Warnakula API - නදීක වර්ණකුල Chemistry Platform"}
 
 @api_router.get("/stats")
 async def get_stats():
@@ -652,7 +652,7 @@ async def get_stats():
         "total_students": total_students,
         "total_courses": total_courses,
         "total_announcements": total_announcements,
-        "platform_name": "SMARTCHEM",
+        "platform_name": "Nadeeka Warnakula",
         "teacher": "නදීක වර්ණකුල (NADEEKA Warnakula)"
     }
 

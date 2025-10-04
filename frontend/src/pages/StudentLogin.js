@@ -58,7 +58,7 @@ const StudentLogin = () => {
           <Link to="/">
             <img 
               src="/images/logo.png" 
-              alt="SMARTCHEM Logo" 
+              alt="Nadeeka Warnakula Logo" 
               className="h-16 w-auto mx-auto mb-4 cursor-pointer"
             />
           </Link>

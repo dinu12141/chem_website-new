@@ -1,8 +1,8 @@
-# SMARTCHEM Platform - Deployment Guide
+# Nadeeka Warnakula - Deployment Guide
 
 ## 🚀 Quick Start
 
-The SMARTCHEM platform is now ready for hosting with complete Docker containerization and deployment scripts.
+The Nadeeka Warnakula platform is now ready for hosting with complete Docker containerization and deployment scripts.
 
 ### Prerequisites
 
@@ -28,7 +28,7 @@ This will:
 ## 📁 Project Structure
 
 ```
-smartchem/
+nadeeka-warnakula/
 ├── backend/                 # FastAPI Backend
 │   ├── server.py           # Main server file
 │   ├── requirements.txt    # Python dependencies
@@ -127,15 +127,15 @@ docker-compose up -d --build
 **Backend**:
 ```bash
 cd backend
-docker build -t smartchem-backend .
-docker run -p 8000:8000 --env-file .env smartchem-backend
+docker build -t nadeeka-warnakula-backend .
+docker run -p 8000:8000 --env-file .env nadeeka-warnakula-backend
 ```
 
 **Frontend**:
 ```bash
 cd frontend
-docker build -t smartchem-frontend .
-docker run -p 3000:3000 smartchem-frontend
+docker build -t nadeeka-warnakula-frontend .
+docker run -p 3000:3000 nadeeka-warnakula-frontend
 ```
 
 ## 🔧 Configuration
@@ -147,7 +147,7 @@ Create `backend/.env`:
 ```env
 # MongoDB Configuration
 MONGO_URL=mongodb://localhost:27017
-DB_NAME=smartchem
+DB_NAME=nadeeka_warnakula
 
 # CORS Configuration
 CORS_ORIGINS=http://localhost:3000,http://127.0.0.1:3000
@@ -198,7 +198,7 @@ REACT_APP_ENVIRONMENT=production
 **Backend (Heroku)**:
 ```bash
 # In backend directory
-heroku create smartchem-api
+heroku create nadeeka-warnakula-api
 heroku addons:create mongolab
 heroku config:set SECRET_KEY=your-secret-key
 git subtree push --prefix backend heroku main
@@ -218,7 +218,7 @@ yarn build
 ```bash
 # Clone the repository
 git clone <your-repo-url>
-cd smartchem
+cd nadeeka-warnakula
 
 # Update production URLs in .env files
 # Install Docker and Docker Compose
@@ -323,7 +323,7 @@ The platform includes built-in health checks:
 
 ## 🎉 Success!
 
-Your SMARTCHEM platform is now ready for hosting! The platform includes:
+Your Nadeeka Warnakula platform is now ready for hosting! The platform includes:
 
 ✅ Complete backend API with authentication  
 ✅ Professional React frontend  

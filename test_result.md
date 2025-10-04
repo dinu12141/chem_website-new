@@ -103,14 +103,14 @@
 #====================================================================================================
 
 user_problem_statement: |
-  Build the complete SMARTCHEM educational platform with teacher integration and pb.lk style homepage.
+  Build the complete Nadeeka Warnakula educational platform with teacher integration and pb.lk style homepage.
   Requirements:
   1. Perfect homepage with teacher's picture prominently displayed as background (pb.lk style)
   2. Student registration system with auto-generated register numbers (SC2024XXX format)
   3. A/L year selection dropdown (2024, 2025, 2026)
   4. Teacher image and logo integration throughout the site
   5. Complete 8 pages: Home, Our Story, Classes, Testimonials, Telegram, Support, Login, Register, Dashboard, Announcements
-  6. Dark theme with orange accents matching SMARTCHEM branding
+  6. Dark theme with orange accents matching Nadeeka Warnakula branding
   7. Mobile responsive design
   8. Full authentication system with JWT tokens
 
@@ -234,7 +234,7 @@ frontend:
     status_history:
       - working: true
         agent: "main"
-        comment: "Complete navigation with SMARTCHEM logo, responsive design, dark theme with orange accents, all UI components"
+        comment: "Complete navigation with Nadeeka Warnakula logo, responsive design, dark theme with orange accents, all UI components"
   
   - task: "Student Dashboard"
     implemented: true

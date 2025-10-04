@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# SMARTCHEM Platform Deployment Script
+# Nadeeka Warnakula Deployment Script
 set -e
 
-echo "🚀 Starting SMARTCHEM Platform Deployment..."
+echo "🚀 Starting Nadeeka Warnakula Deployment..."
 
 # Colors for output
 RED='\033[0;31m'
@@ -46,7 +46,7 @@ COMMAND=${1:-"start"}
 
 case $COMMAND in
     "start")
-        print_status "Starting SMARTCHEM platform..."
+        print_status "Starting Nadeeka Warnakula platform..."
         
         # Create environment files if they don't exist
         if [ ! -f backend/.env ]; then
@@ -73,24 +73,24 @@ case $COMMAND in
         print_status "Initializing sample data..."
         curl -X POST http://localhost:8000/api/initialize-data || print_warning "Failed to initialize sample data (service might not be ready yet)"
         
-        print_success "SMARTCHEM platform is now running!"
+        print_success "Nadeeka Warnakula platform is now running!"
         print_status "Frontend: http://localhost:3000"
         print_status "Backend API: http://localhost:8000"
         print_status "API Documentation: http://localhost:8000/docs"
         ;;
         
     "stop")
-        print_status "Stopping SMARTCHEM platform..."
+        print_status "Stopping Nadeeka Warnakula platform..."
         docker-compose down
-        print_success "SMARTCHEM platform stopped."
+        print_success "Nadeeka Warnakula platform stopped."
         ;;
         
     "restart")
-        print_status "Restarting SMARTCHEM platform..."
+        print_status "Restarting Nadeeka Warnakula platform..."
         docker-compose down
         docker-compose up -d
         sleep 10
-        print_success "SMARTCHEM platform restarted!"
+        print_success "Nadeeka Warnakula platform restarted!"
         ;;
         
     "logs")
@@ -126,8 +126,8 @@ case $COMMAND in
         print_status "Creating database backup..."
         BACKUP_DIR="./backups/$(date +%Y%m%d_%H%M%S)"
         mkdir -p $BACKUP_DIR
-        docker-compose exec mongodb mongodump --db smartchem --out /tmp/backup
-        docker cp smartchem-mongodb:/tmp/backup $BACKUP_DIR/
+        docker-compose exec mongodb mongodump --db nadeeka_warnakula --out /tmp/backup
+        docker cp nadeeka-warnakula-mongodb:/tmp/backup $BACKUP_DIR/
         print_success "Backup created in $BACKUP_DIR"
         ;;
         
@@ -135,9 +135,9 @@ case $COMMAND in
         echo "Usage: $0 {start|stop|restart|logs|status|clean|backup}"
         echo ""
         echo "Commands:"
-        echo "  start   - Start the SMARTCHEM platform"
-        echo "  stop    - Stop the SMARTCHEM platform"
-        echo "  restart - Restart the SMARTCHEM platform"
+        echo "  start   - Start the Nadeeka Warnakula platform"
+        echo "  stop    - Stop the Nadeeka Warnakula platform"
+        echo "  restart - Restart the Nadeeka Warnakula platform"
         echo "  logs    - Show logs (optionally specify service: backend, frontend, mongodb)"
         echo "  status  - Show service status"
         echo "  clean   - Remove all containers, images, and volumes"

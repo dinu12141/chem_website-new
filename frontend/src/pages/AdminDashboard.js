@@ -25,7 +25,6 @@ import {
   LogOut
 } from 'lucide-react';
 import axios from 'axios';
-import PageBackground from '../components/PageBackground';
 
 const BACKEND_URL = process.env.REACT_APP_BACKEND_URL;
 const API = `${BACKEND_URL}/api`;
@@ -37,7 +36,8 @@ const AdminDashboard = () => {
   const [courses, setCourses] = useState([]);
   const [telegramChannels, setTelegramChannels] = useState([]);
   const [videoLessons, setVideoLessons] = useState([]);
-  const [users, setUsers] = useState([]); // Add users state
+  const [users, setUsers] = useState([]);
+  const [admins, setAdmins] = useState([]); // Add admins state
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   
@@ -54,18 +54,17 @@ const AdminDashboard = () => {
     title: '', title_sinhala: '', description: '', video_url: '', 
     thumbnail: '', duration: '', course_id: '', is_published: true
   });
+  const [newAdmin, setNewAdmin] = useState({
+    username: '', email: '', password: ''
+  }); // Add new admin state
   
   // Edit states
   const [editingCourse, setEditingCourse] = useState(null);
   const [editingTelegramChannel, setEditingTelegramChannel] = useState(null);
   const [editingVideoLesson, setEditingVideoLesson] = useState(null);
 
-  // Add admin info state
-  const [adminInfo, setAdminInfo] = useState(null);
-
   useEffect(() => {
     fetchData();
-    fetchAdminInfo();
   }, [activeTab]);
 
   const fetchData = async () => {
@@ -88,9 +87,17 @@ const AdminDashboard = () => {
           const videosRes = await axios.get(`${API}/video-lessons`);
           setVideoLessons(videosRes.data);
           break;
-        case 'users': // Add users case
+        case 'users':
           const usersRes = await axios.get(`${API}/admin/users`);
           setUsers(usersRes.data);
+          break;
+        case 'admins': // Add admins case
+          const adminsRes = await axios.get(`${API}/auth/admin/admins`, {
+            headers: {
+              'Authorization': `Bearer ${sessionStorage.getItem('adminToken')}`
+            }
+          });
+          setAdmins(adminsRes.data);
           break;
         default:
           break;
@@ -103,35 +110,64 @@ const AdminDashboard = () => {
     }
   };
 
-  // Add function to fetch admin info
-  const fetchAdminInfo = async () => {
+  // Add function to create a new admin
+  const createAdmin = async () => {
     try {
       const adminToken = sessionStorage.getItem('adminToken');
-      if (!adminToken) {
-        navigate('/admin/login');
-        return;
-      }
-
-      const response = await fetch(`${API}/auth/admin/me`, {
+      const response = await fetch(`${API}/auth/admin/register`, {
+        method: 'POST',
         headers: {
-          'Authorization': `Bearer ${adminToken}`,
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${adminToken}`
         },
+        body: JSON.stringify(newAdmin)
       });
 
       if (!response.ok) {
-        sessionStorage.removeItem('adminToken');
-        sessionStorage.removeItem('isAdmin');
-        navigate('/admin/login');
-        return;
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to create admin');
       }
 
       const data = await response.json();
-      setAdminInfo(data);
+      alert(data.message);
+      
+      // Reset form
+      setNewAdmin({ username: '', email: '', password: '' });
+      
+      // Refresh admins list
+      fetchData();
     } catch (error) {
-      console.error('Error fetching admin info:', error);
-      sessionStorage.removeItem('adminToken');
-      sessionStorage.removeItem('isAdmin');
-      navigate('/admin/login');
+      console.error('Error creating admin:', error);
+      alert(error.message || 'Failed to create admin');
+    }
+  };
+
+  // Add function to delete an admin
+  const deleteAdmin = async (adminId) => {
+    if (!window.confirm('Are you sure you want to delete this admin?')) {
+      return;
+    }
+    
+    try {
+      const adminToken = sessionStorage.getItem('adminToken');
+      const response = await fetch(`${API}/auth/admin/admins/${adminId}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${adminToken}`
+        }
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.detail || 'Failed to delete admin');
+      }
+
+      // Refresh admins list
+      fetchData();
+      alert('Admin deleted successfully');
+    } catch (error) {
+      console.error('Error deleting admin:', error);
+      alert(error.message || 'Failed to delete admin');
     }
   };
 
@@ -335,10 +371,16 @@ const AdminDashboard = () => {
     }
   };
 
+  const handleNewAdminChange = (e) => {
+    setNewAdmin({
+      ...newAdmin,
+      [e.target.name]: e.target.value
+    });
+  };
+
   if (loading && activeTab === 'messages') {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center relative overflow-hidden">
-        <PageBackground />
         <div className="text-white relative z-10">Loading messages...</div>
       </div>
     );
@@ -346,16 +388,10 @@ const AdminDashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-900 relative">
-      <PageBackground />
       <div className="relative z-10 p-4 md:p-8">
         <div className="flex justify-between items-center mb-6">
           <div>
             <h1 className="text-3xl font-bold text-white">Admin Dashboard</h1>
-            {adminInfo && (
-              <p className="text-gray-400 mt-1">
-                Welcome, {adminInfo.username} ({adminInfo.email})
-              </p>
-            )}
           </div>
           <Button 
             onClick={handleAdminLogout}
@@ -426,6 +462,17 @@ const AdminDashboard = () => {
               <Users className="w-4 h-4 inline mr-2" />
               Users
             </button>
+            <button
+              onClick={() => setActiveTab('admins')}
+              className={`px-4 py-2 rounded-t-lg font-medium transition-colors ${
+                activeTab === 'admins'
+                  ? 'bg-orange-600 text-white'
+                  : 'bg-gray-800 text-gray-300 hover:bg-gray-700'
+              }`}
+            >
+              <User className="w-4 h-4 inline mr-2" />
+              Admins
+            </button>
           </div>
 
           {/* Refresh Button */}
@@ -452,6 +499,107 @@ const AdminDashboard = () => {
             </div>
           ) : (
             <>
+              {/* Admins Tab */}
+              {activeTab === 'admins' && (
+                <div className="space-y-6">
+                  {/* Add New Admin Form */}
+                  <Card className="bg-gray-800 border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-white flex items-center">
+                        <Plus className="w-5 h-5 mr-2" />
+                        Add New Admin
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <Input
+                          placeholder="Username"
+                          name="username"
+                          value={newAdmin.username}
+                          onChange={handleNewAdminChange}
+                          className="bg-gray-700 border-gray-600 text-white"
+                        />
+                        <Input
+                          placeholder="Email"
+                          name="email"
+                          type="email"
+                          value={newAdmin.email}
+                          onChange={handleNewAdminChange}
+                          className="bg-gray-700 border-gray-600 text-white"
+                        />
+                        <Input
+                          placeholder="Password"
+                          name="password"
+                          type="password"
+                          value={newAdmin.password}
+                          onChange={handleNewAdminChange}
+                          className="bg-gray-700 border-gray-600 text-white"
+                        />
+                      </div>
+                      <div className="flex justify-end mt-4">
+                        <Button
+                          onClick={createAdmin}
+                          className="bg-yellow-600 hover:bg-yellow-700"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Add Admin
+                        </Button>
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  {/* Admins List */}
+                  <Card className="bg-gray-800 border-gray-700">
+                    <CardHeader>
+                      <CardTitle className="text-white flex items-center">
+                        <User className="w-5 h-5 mr-2" />
+                        Admin Users
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="overflow-x-auto">
+                        <table className="w-full text-left text-gray-300">
+                          <thead className="text-xs uppercase bg-gray-700">
+                            <tr>
+                              <th className="px-4 py-3">Username</th>
+                              <th className="px-4 py-3">Email</th>
+                              <th className="px-4 py-3">Created At</th>
+                              <th className="px-4 py-3">Actions</th>
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {admins.map((admin) => (
+                              <tr key={admin.id} className="border-b border-gray-700 hover:bg-gray-750">
+                                <td className="px-4 py-3 font-medium text-white">{admin.username}</td>
+                                <td className="px-4 py-3">{admin.email}</td>
+                                <td className="px-4 py-3">
+                                  {new Date(admin.created_at).toLocaleDateString()}
+                                </td>
+                                <td className="px-4 py-3">
+                                  <Button
+                                    onClick={() => deleteAdmin(admin.id)}
+                                    variant="outline"
+                                    size="sm"
+                                    className="border-red-500 text-red-500 hover:bg-red-500 hover:text-white"
+                                  >
+                                    <Trash2 className="w-4 h-4" />
+                                  </Button>
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                      {admins.length === 0 && (
+                        <div className="text-center py-8 text-gray-400">
+                          No admins found
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </div>
+              )}
+
               {/* Users Tab */}
               {activeTab === 'users' && (
                 <div className="space-y-6">
@@ -1153,16 +1301,6 @@ const AdminDashboard = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {videoLessons.map((lesson) => (
                       <Card key={lesson.id} className="bg-gray-800 border-gray-700">
-                        <div className="relative h-40">
-                          <img 
-                            src={lesson.thumbnail || '/images/placeholder-video.jpg'} 
-                            alt={lesson.title}
-                            className="w-full h-full object-cover rounded-t-lg"
-                          />
-                          <div className="absolute bottom-2 right-2 bg-black/70 text-white text-xs px-2 py-1 rounded">
-                            {lesson.duration}
-                          </div>
-                        </div>
                         <CardHeader>
                           <div className="flex justify-between items-start">
                             <CardTitle className="text-white text-lg">{lesson.title}</CardTitle>
@@ -1173,22 +1311,25 @@ const AdminDashboard = () => {
                           <p className="text-yellow-500 font-medium">{lesson.title_sinhala}</p>
                         </CardHeader>
                         <CardContent>
-                          <p className="text-gray-400 text-sm mb-4 line-clamp-2">{lesson.description}</p>
-                          
-                          <div className="space-y-2 text-sm">
-                            <div className="flex justify-between">
-                              <span className="text-gray-400">Course ID:</span>
-                              <span className="text-white truncate max-w-[100px]">{lesson.course_id}</span>
-                            </div>
-                            <div className="flex justify-between">
-                              <span className="text-gray-400">Video:</span>
-                              <a href={lesson.video_url} target="_blank" rel="noopener noreferrer" className="text-yellow-500 hover:text-yellow-400 truncate max-w-[100px]">
-                                View
-                              </a>
+                          <div className="flex items-center mb-3">
+                            <img 
+                              src={lesson.thumbnail || '/images/placeholder-video.jpg'} 
+                              alt={lesson.title} 
+                              className="w-16 h-16 object-cover rounded mr-3"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = '/images/placeholder-video.jpg';
+                              }}
+                            />
+                            <div>
+                              <p className="text-gray-400 text-sm">{lesson.duration}</p>
+                              <p className="text-gray-400 text-sm">Course ID: {lesson.course_id}</p>
                             </div>
                           </div>
-
-                          <div className="flex justify-end space-x-2 mt-4">
+                          
+                          <p className="text-gray-400 text-sm mb-4 line-clamp-2">{lesson.description}</p>
+                          
+                          <div className="flex justify-end space-x-2">
                             <Button
                               size="sm"
                               variant="outline"

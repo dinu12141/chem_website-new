@@ -1,5 +1,5 @@
-// MongoDB initialization script for SMARTCHEM
-db = db.getSiblingDB('smartchem');
+// MongoDB initialization script for Nadeeka Warnakula
+db = db.getSiblingDB('nadeeka_warnakula');
 
 // Create collections
 db.createCollection('users');

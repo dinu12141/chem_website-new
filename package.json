@@ -1,7 +1,7 @@
 {
-  "name": "smartchem-platform",
+  "name": "nadeeka-warnakula",
   "version": "1.0.0",
-  "description": "SMARTCHEM Educational Platform - නදීක වර්ණකුල Chemistry Learning Platform",
+  "description": "Nadeeka Warnakula Educational Platform - නදීක වර්ණකුල Chemistry Learning Platform",
   "main": "index.js",
   "scripts": {
     "install:all": "cd frontend && yarn install",

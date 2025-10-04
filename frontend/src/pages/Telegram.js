@@ -265,9 +265,9 @@ const Telegram = () => {
                   Call: +94 71 746 2205
                 </Button>
               </a>
-              <a href="mailto:smartchem@gmail.com">
+              <a href="mailto:nadeeka.warnakula@gmail.com">
                 <Button size="lg" variant="outline" className="border-white text-white hover:bg-white hover:text-orange-600">
-                  Email: smartchem@gmail.com
+                  Email: nadeeka.warnakula@gmail.com
                 </Button>
               </a>
             </div>

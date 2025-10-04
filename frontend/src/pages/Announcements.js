@@ -162,7 +162,7 @@ const Announcements = () => {
             Announcements
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            Stay updated with the latest news, class schedules, and important information from SMARTCHEM
+            Stay updated with the latest news, class schedules, and important information from Nadeeka Warnakula
           </p>
         </div>
         </Reveal>

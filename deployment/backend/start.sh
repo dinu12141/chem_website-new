@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# SMARTCHEM Backend Startup Script
-echo "Starting SMARTCHEM Backend Server..."
+# Nadeeka Warnakula Backend Startup Script
+echo "Starting Nadeeka Warnakula Backend Server..."
 
 # Load environment variables
 if [ -f .env ]; then

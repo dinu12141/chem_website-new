@@ -20,14 +20,14 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 # Database connection
 mongo_url = os.environ.get('MONGO_URL', 'mongodb://localhost:27017')
-db_name = os.environ.get('DB_NAME', 'smartchem')
+db_name = os.environ.get('DB_NAME', 'nadeeka_warnakula')
 
 async def create_admin_user():
     """Create an initial admin user"""
     # Get admin credentials from environment or use defaults
     admin_username = os.environ.get('ADMIN_USERNAME', 'admin')
-    admin_email = os.environ.get('ADMIN_EMAIL', 'admin@smartchem.lk')
-    admin_password = os.environ.get('ADMIN_PASSWORD', 'smartchem2025')
+    admin_email = os.environ.get('ADMIN_EMAIL', 'admin@nadeeka-warnakula.lk')
+    admin_password = os.environ.get('ADMIN_PASSWORD', 'nadeeka2025')
     
     # Connect to database
     client = AsyncIOMotorClient(mongo_url)

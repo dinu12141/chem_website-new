@@ -18,7 +18,7 @@ const Logo = () => {
         <div className="relative z-10 w-24 h-24 flex items-center justify-center">
           <img 
             src="/images/logo.png" 
-            alt="SMARTCHEM Logo" 
+            alt="Nadeeka Warnakula Logo" 
             className="w-full h-full object-contain drop-shadow-[0_0_8px_rgba(251,191,36,0.5)] transform -rotate-3"
           />
         </div>

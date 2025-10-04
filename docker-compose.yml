@@ -3,29 +3,29 @@ version: '3.8'
 services:
   mongodb:
     image: mongo:7.0
-    container_name: smartchem-mongodb
+    container_name: nadeeka-warnakula-mongodb
     restart: unless-stopped
     environment:
-      MONGO_INITDB_DATABASE: smartchem
+      MONGO_INITDB_DATABASE: nadeeka_warnakula
     ports:
       - "27017:27017"
     volumes:
       - mongodb_data:/data/db
       - ./backend/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     networks:
-      - smartchem-network
+      - nadeeka-warnakula-network
 
   backend:
     build:
       context: ./backend
       dockerfile: Dockerfile
-    container_name: smartchem-backend
+    container_name: nadeeka-warnakula-backend
     restart: unless-stopped
     environment:
       - MONGO_URL=mongodb://mongodb:27017
-      - DB_NAME=smartchem
+      - DB_NAME=nadeeka_warnakula
       - CORS_ORIGINS=http://localhost:3000,http://frontend:3000
-      - SECRET_KEY=smartchem_secret_key_2024_nadeeka_warnakula
+      - SECRET_KEY=nadeeka_warnakula_secret_key_2024_nadeeka_warnakula
       - ACCESS_TOKEN_EXPIRE_MINUTES=43200
       - HOST=0.0.0.0
       - PORT=8000
@@ -36,7 +36,7 @@ services:
     depends_on:
       - mongodb
     networks:
-      - smartchem-network
+      - nadeeka-warnakula-network
     volumes:
       - ./backend/.env:/app/.env:ro
 
@@ -44,7 +44,7 @@ services:
     build:
       context: ./frontend
       dockerfile: Dockerfile
-    container_name: smartchem-frontend
+    container_name: nadeeka-warnakula-frontend
     restart: unless-stopped
     environment:
       - REACT_APP_BACKEND_URL=http://localhost:8000
@@ -56,12 +56,12 @@ services:
     depends_on:
       - backend
     networks:
-      - smartchem-network
+      - nadeeka-warnakula-network
 
 volumes:
   mongodb_data:
     driver: local
 
 networks:
-  smartchem-network:
+  nadeeka-warnakula-network:
     driver: bridge

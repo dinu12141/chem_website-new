@@ -91,7 +91,7 @@ const Dashboard = () => {
             Welcome, {user?.full_name}!
           </h1>
           <p className="text-gray-400">
-            Your SMARTCHEM Dashboard - Track your progress and stay updated
+            Your Nadeeka Warnakula Dashboard - Track your progress and stay updated
           </p>
         </div>
         </Reveal>

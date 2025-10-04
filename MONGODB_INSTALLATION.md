@@ -1,4 +1,4 @@
-# MongoDB Installation Guide for SMARTCHEM
+# MongoDB Installation Guide for Nadeeka Warnakula
 
 ## Windows Installation
 
@@ -100,5 +100,5 @@ If you prefer not to install MongoDB locally:
 2. Create a free cluster
 3. Update the backend [.env](file:///c%3A/Users/samsung/OneDrive/Desktop/Chem%20Site/chem_website-new/backend/.env) file:
    ```
-   MONGO_URL=mongodb+srv://[username]:[password]@[cluster-url]/smartchem?retryWrites=true&w=majority
+   MONGO_URL=mongodb+srv://[username]:[password]@[cluster-url]/nadeeka_warnakula?retryWrites=true&w=majority
    ```

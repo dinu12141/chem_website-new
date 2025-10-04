@@ -65,7 +65,7 @@ const Navbar = () => {
                   <img 
                     src="/images/logo.png" 
                     alt="Logo" 
-                    className="h-12 w-auto smartchem-logo"
+                    className="h-12 w-auto nadeeka-warnakula-logo"
                   />
                 </Link>
 
@@ -113,11 +113,7 @@ const Navbar = () => {
                           Student Login
                         </Button>
                       </Link>
-                      <Link to="/admin/login">
-                        <Button variant="outline" className="border-white text-white hover:bg-white hover:text-gray-900 px-4 py-2 rounded-full text-sm">
-                          Admin Login
-                        </Button>
-                      </Link>
+                      {/* Admin Login button removed as requested */}
                     </div>
                   )}
                 </div>
@@ -187,13 +183,7 @@ onClick={() => handleNavClick(item)}
                   >
                     Student Login
                   </Link>
-                  <Link
-                    to="/admin/login"
-                    onClick={() => setIsOpen(false)}
-                    className="block px-3 py-2 bg-gray-700 text-white text-center rounded-md"
-                  >
-                    Admin Login
-                  </Link>
+                  {/* Admin Login button removed as requested */}
                 </div>
               )}
             </div>

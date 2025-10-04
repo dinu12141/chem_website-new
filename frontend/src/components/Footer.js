@@ -13,12 +13,12 @@ const Footer = () => {
               <Link to="/">
                 <img 
                   src="/images/logo.png" 
-                  alt="SMARTCHEM Logo" 
+                  alt="Nadeeka Warnakula Logo" 
                   className="h-10 w-auto"
                 />
               </Link>
               <div className="text-2xl font-bold text-yellow-500">
-                SMARTCHEM
+                Nadeeka Warnakula
               </div>
             </div>
             <p className="text-gray-400 mb-4">
@@ -66,10 +66,10 @@ const Footer = () => {
               <div className="flex items-center space-x-3 text-gray-400">
                 <Mail className="w-4 h-4 text-yellow-500" />
                 <a 
-                  href="mailto:smartchem@gmail.com" 
+                  href="mailto:nadeeka.warnakula@gmail.com" 
                   className="hover:text-yellow-500 transition-colors"
                 >
-                  smartchem@gmail.com
+                  nadeeka.warnakula@gmail.com
                 </a>
               </div>
               <div className="flex items-center space-x-3 text-gray-400">

@@ -1,7 +1,7 @@
-# SMARTCHEM Startup Script for PowerShell
+# Nadeeka Warnakula Startup Script for PowerShell
 
 Write-Host "====================================================" -ForegroundColor Cyan
-Write-Host "           SMARTCHEM - Chemistry Learning Platform" -ForegroundColor Cyan
+Write-Host "           Nadeeka Warnakula - Chemistry Learning Platform" -ForegroundColor Cyan
 Write-Host "====================================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -49,7 +49,7 @@ try {
 }
 
 Write-Host ""
-Write-Host "Starting SMARTCHEM Application..." -ForegroundColor Yellow
+Write-Host "Starting Nadeeka Warnakula Application..." -ForegroundColor Yellow
 Write-Host ""
 Write-Host "Backend URL: http://localhost:8000" -ForegroundColor Green
 Write-Host "Frontend URL: http://localhost:3000" -ForegroundColor Green

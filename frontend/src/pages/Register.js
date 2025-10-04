@@ -203,7 +203,7 @@ const Register = () => {
               </h2>
               
               <div className="bg-gray-700 rounded-lg p-4 mb-6">
-                <p className="text-gray-300 mb-2">Welcome to SMARTCHEM,</p>
+                <p className="text-gray-300 mb-2">Welcome to Nadeeka Warnakula,</p>
                 <p className="text-xl font-semibold text-orange-500 mb-3">
                   {success.student_name}
                 </p>
@@ -251,7 +251,7 @@ const Register = () => {
           <Link to="/">
             <img 
               src="/images/logo.png" 
-              alt="SMARTCHEM Logo" 
+              alt="Nadeeka Warnakula Logo" 
               className="h-16 w-auto mx-auto mb-4 cursor-pointer"
             />
           </Link>

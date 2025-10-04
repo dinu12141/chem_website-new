@@ -27,7 +27,7 @@ const OurStory = () => {
             Our Story
           </h1>
           <p className="text-xl text-gray-400 max-w-3xl mx-auto">
-            ගුරුවරයා ගේ ප්‍රේමයෙන්, දැනුමෙන් සහ කැපවීමෙන් අද SMARTCHEM ශ්‍රී ලංකාව පුරා ප්‍රසිද්ධ නමක්
+            ගුරුවරයා ගේ ප්‍රේමයෙන්, දැනුමෙන් සහ කැපවීමෙන් අද Nadeeka Warnakula ශ්‍රී ලංකාව පුරා ප්‍රසිද්ධ නමක්
           </p>
         </div>
         </Reveal>
@@ -62,7 +62,7 @@ const OurStory = () => {
                       දඟර දූ පුතුවන් විශිෂ්ටත්වයට පත් කිරීමේ ශක්තිමත් ක්‍රමවේදයක් ගොඩනගා ඇත.
                     </p>
                     <p className="text-gray-400">
-                      "Chemistry නම් Chemistry" — SMARTCHEM නාමය කැපී පෙනෙන්නේ ඉතා ගුණාත්මක අධ්‍යාපන
+                      "Chemistry නම් Chemistry" — Nadeeka Warnakula නාමය කැපී පෙනෙන්නේ ඉතා ගුණාත්මක අධ්‍යාපන
                       සේවාවක් නිසි පාරදීතාවයකින් නිර්මාණය කිරීම නිසාය.
                     </p>
                   </div>
@@ -147,7 +147,7 @@ const OurStory = () => {
         {/* What Makes Us Special */}
         <div className="mb-16">
           <h2 className="text-3xl font-bold text-white text-center mb-12">
-            What Makes SMARTCHEM Special
+            What Makes Nadeeka Warnakula Special
           </h2>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
