@@ -6,22 +6,31 @@ Before running the application, you need to have:
 
 1. **Python 3.8+** installed
 2. **Node.js 14+** installed
-3. **MongoDB** installed and running
+3. **MongoDB** installed and running (for MongoDB version) OR **Firebase Account** set up (for Firebase version)
+
+## Firebase Setup (Recommended)
+
+Follow the instructions in [FIREBASE_SETUP.md](FIREBASE_SETUP.md) to set up Firebase for the application.
 
 ## Installation
 
-### 1. Install MongoDB
+### Option 1: Firebase Setup (Recommended)
 
-Follow the instructions in [MONGODB_INSTALLATION.md](MONGODB_INSTALLATION.md) to install and set up MongoDB.
+1. Follow the instructions in [FIREBASE_SETUP.md](FIREBASE_SETUP.md) to set up Firebase
+2. Configure environment variables in both `backend/.env` and `frontend/.env` using the provided templates
 
-### 2. Backend Setup
+### Option 2: MongoDB Setup
+
+1. Follow the instructions in [MONGODB_INSTALLATION.md](MONGODB_INSTALLATION.md) to install and set up MongoDB
+
+### Backend Setup
 
 ```bash
 cd backend
 pip install -r requirements.txt
 ```
 
-### 3. Frontend Setup
+### Frontend Setup
 
 ```bash
 cd frontend
@@ -30,7 +39,29 @@ npm install
 
 ## Running the Application
 
-### 1. Start MongoDB
+### Option 1: Firebase Version (Recommended)
+
+1. Start Firebase Backend Server
+
+```bash
+cd backend
+python firebase/server_firebase.py
+```
+
+The backend will be available at http://localhost:8000
+
+2. Start Frontend Development Server
+
+```bash
+cd frontend
+npm start
+```
+
+The frontend will be available at http://localhost:3000
+
+### Option 2: MongoDB Version
+
+1. Start MongoDB
 
 Make sure MongoDB is running:
 - On Windows: `net start MongoDB`
@@ -41,7 +72,7 @@ You can verify MongoDB is running by executing:
 python check_mongodb.py
 ```
 
-### 2. Start Backend Server
+2. Start Backend Server
 
 ```bash
 cd backend
@@ -50,7 +81,7 @@ python server.py
 
 The backend will be available at http://localhost:8000
 
-### 3. Start Frontend Development Server
+3. Start Frontend Development Server
 
 ```bash
 cd frontend
@@ -81,21 +112,31 @@ If you see database connection errors:
 
 ```
 ├── backend/              # FastAPI backend
-│   ├── server.py         # Main application file
+│   ├── server.py         # Main application file (MongoDB version)
+│   ├── firebase/         # Firebase implementation
+│   │   ├── server_firebase.py  # Firebase backend server
+│   │   ├── firebase_config.py  # Firebase configuration
+│   │   ├── services.py   # Firebase services
+│   │   ├── auth_service.py  # Firebase authentication
+│   │   └── models.py     # Firebase data models
 │   ├── .env             # Environment variables
 │   └── requirements.txt  # Python dependencies
 ├── frontend/             # React frontend
 │   ├── src/              # Source code
+│   │   ├── firebase.js   # Firebase configuration
+│   │   ├── contexts/FirebaseAuthContext.js  # Firebase auth context
+│   │   └── pages/Firebase*.js  # Firebase-specific pages
 │   ├── public/           # Static assets
 │   └── package.json      # Node.js dependencies
-└── README.md            # This file
+├── README.md            # This file
+└── FIREBASE_SETUP.md    # Firebase setup guide
 ```
 
 ## Development
 
 ### Backend Development
 
-The backend uses FastAPI with MongoDB. Key features:
+The backend uses FastAPI with either MongoDB or Firebase. Key features:
 - User authentication (registration, login)
 - Course management
 - Teacher profiles
@@ -104,6 +145,14 @@ The backend uses FastAPI with MongoDB. Key features:
 - Support messages
 - Telegram channels
 - Video lessons
+
+#### Firebase Implementation
+
+The Firebase implementation is located in the `backend/firebase` directory and includes:
+- Firebase Admin SDK integration
+- Firestore database operations
+- Firebase Authentication
+- Firebase Storage for file uploads
 
 ### Frontend Development
 
@@ -194,7 +243,11 @@ nadeeka-warnakula/
 
 ### Backend
 - **FastAPI** - Modern Python web framework
-- **MongoDB** - NoSQL database with Motor async driver
+- **MongoDB** - NoSQL database with Motor async driver (Optional)
+- **Firebase** - Backend-as-a-Service platform (Recommended)
+  - **Firestore** - NoSQL document database
+  - **Firebase Authentication** - User authentication
+  - **Firebase Storage** - File storage
 - **JWT Authentication** - Secure token-based auth
 - **Pydantic** - Data validation and serialization
 - **Uvicorn** - ASGI server

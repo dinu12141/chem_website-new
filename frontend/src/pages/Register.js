@@ -20,57 +20,17 @@ const Register = () => {
     alYear: '',
     schoolName: '',
     password: '',
-    confirmPassword: '',
-    otp: ''
+    confirmPassword: ''
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(null);
   const [step, setStep] = useState(1);
-  const [otpSent, setOtpSent] = useState(false);
-  const [otpVerified, setOtpVerified] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   
   const { register } = useAuth();
   const navigate = useNavigate();
-
-  const handleSendOtp = async () => {
-    if (!formData.phoneNumber) {
-      setError('Please enter your phone number first');
-      return;
-    }
-    
-    setLoading(true);
-    setError('');
-    
-    // Simulate sending OTP
-    setTimeout(() => {
-      setOtpSent(true);
-      setLoading(false);
-      // In a real app, you would send an actual OTP to the phone number
-      // For demo purposes, we'll just show a success message
-      alert(`OTP sent to ${formData.phoneNumber} (In a real app, an actual OTP would be sent)`);
-    }, 1500);
-  };
-
-  const handleVerifyOtp = async () => {
-    if (!formData.otp) {
-      setError('Please enter the OTP');
-      return;
-    }
-    
-    setLoading(true);
-    setError('');
-    
-    // Simulate OTP verification
-    setTimeout(() => {
-      // In a real app, you would verify the OTP with your backend
-      // For demo purposes, we'll just accept any non-empty OTP
-      setOtpVerified(true);
-      setLoading(false);
-    }, 1500);
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -141,12 +101,6 @@ const Register = () => {
 
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters long');
-      setLoading(false);
-      return;
-    }
-
-    if (!otpVerified) {
-      setError('Please verify your phone number with OTP first');
       setLoading(false);
       return;
     }
@@ -481,88 +435,9 @@ const Register = () => {
                   </div>
                 </div>
 
-                {/* OTP Verification Section */}
-                <div className="bg-gray-700 rounded-lg p-4">
-                  <h3 className="text-white font-medium mb-3">Phone Verification</h3>
-                  
-                  {error && otpSent && !otpVerified && (
-                    <Alert className="border-red-500 bg-red-500/10 mb-3">
-                      <AlertDescription className="text-red-500">
-                        {error}
-                      </AlertDescription>
-                    </Alert>
-                  )}
-                  
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                    <div className="space-y-2">
-                      <Label htmlFor="otp" className="text-white">
-                        Enter OTP <span className="text-red-500">*</span>
-                      </Label>
-                      <Input
-                        id="otp"
-                        name="otp"
-                        type="text"
-                        required
-                        disabled={!otpSent || otpVerified}
-                        value={formData.otp}
-                        onChange={handleChange}
-                        placeholder="Enter the 6-digit code"
-                        className="bg-gray-600 border-gray-500 text-white placeholder-gray-400"
-                      />
-                    </div>
-                    
-                    <div className="flex items-end space-x-2">
-                      <Button
-                        onClick={handleSendOtp}
-                        disabled={loading || otpSent || !formData.phoneNumber}
-                        className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
-                      >
-                        {loading && !otpSent ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Sending...
-                          </>
-                        ) : (
-                          <>
-                            <Send className="w-4 h-4 mr-2" />
-                            Send OTP
-                          </>
-                        )}
-                      </Button>
-                      
-                      {otpSent && !otpVerified && (
-                        <Button
-                          onClick={handleVerifyOtp}
-                          disabled={loading || otpVerified}
-                          className="flex-1 bg-green-600 hover:bg-green-700 text-white"
-                        >
-                          {loading ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Verifying...
-                            </>
-                          ) : (
-                            'Verify'
-                          )}
-                        </Button>
-                      )}
-                    </div>
-                  </div>
-                  
-                  {otpSent && (
-                    <div className="mt-2 text-sm text-gray-400">
-                      {otpVerified ? (
-                        <span className="text-green-500">✓ Phone number verified successfully</span>
-                      ) : (
-                        <span>OTP sent to {formData.phoneNumber}. Please check your messages.</span>
-                      )}
-                    </div>
-                  )}
-                </div>
-
                 <Button
                   type="submit"
-                  disabled={loading || (otpSent && !otpVerified) || !formData.fullName || !formData.email || !formData.phoneNumber || !formData.whatsappNumber || !formData.idNumber || !formData.alYear || !formData.schoolName || !formData.password || !formData.confirmPassword}
+                  disabled={loading || !formData.fullName || !formData.email || !formData.phoneNumber || !formData.whatsappNumber || !formData.idNumber || !formData.alYear || !formData.schoolName || !formData.password || !formData.confirmPassword}
                   className="w-full bg-orange-600 hover:bg-orange-700 text-white"
                 >
                   {loading ? (

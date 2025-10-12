@@ -1,4 +1,48 @@
-    async def create_firebase_user(self, email: str, password: str, display_name: str = None) -> Optional[str]:
+import firebase_admin
+from firebase_admin import auth as firebase_auth
+from typing import Optional, Dict, Any
+import logging
+from passlib.context import CryptContext
+from jose import jwt
+import os
+from datetime import datetime, timedelta
+from pydantic import BaseModel, Field, EmailStr
+from typing import List
+import uuid
+
+logger = logging.getLogger(__name__)
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+
+class FirebaseAuthService:
+    def __init__(self):
+        pass
+    
+    def get_password_hash(self, password: str) -> str:
+        """Generate password hash"""
+        return pwd_context.hash(password)
+    
+    def verify_password(self, plain_password: str, hashed_password: str) -> bool:
+        """Verify password against hash"""
+        return pwd_context.verify(plain_password, hashed_password)
+    
+    def create_access_token(self, data: dict, expires_delta: Optional[Any] = None) -> str:
+        """Create JWT access token"""
+        from datetime import datetime, timedelta
+        
+        SECRET_KEY = os.environ.get('SECRET_KEY', "nadeeka_warnakula_secret_key_2024_nadeeka")
+        ALGORITHM = "HS256"
+        
+        to_encode = data.copy()
+        if expires_delta:
+            expire = datetime.utcnow() + expires_delta
+        else:
+            expire = datetime.utcnow() + timedelta(minutes=15)
+        to_encode.update({"exp": expire})
+        encoded_jwt = jwt.encode(to_encode, SECRET_KEY, algorithm=ALGORITHM)
+        return encoded_jwt
+
+    async def create_firebase_user(self, email: str, password: str, display_name: Optional[str] = None) -> Optional[str]:
         """Create a new Firebase user"""
         try:
             user = firebase_auth.create_user(
@@ -12,7 +56,7 @@
             logger.error(f"Error creating Firebase user: {e}")
             return None
 
-    async def create_firebase_admin(self, email: str, password: str, username: str) -> Optional[str]:
+    async def create_firebase_admin(self, email: str, password: str, username: Optional[str] = None) -> Optional[str]:
         """Create a new Firebase admin user"""
         try:
             user = firebase_auth.create_user(

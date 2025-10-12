@@ -1,4 +1,6 @@
-from fastapi import FastAPI, APIRouter, HTTPException, Depends, status, File, Form
+import firebase_admin
+from firebase_admin import auth as firebase_auth
+from fastapi import FastAPI, APIRouter, HTTPException, Depends, status
 from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field, EmailStr
@@ -12,39 +14,62 @@ import uuid
 import random
 from pathlib import Path
 from dotenv import load_dotenv
-import firebase_admin
-from firebase_admin import auth as firebase_auth
 
 # Import Firebase services
-import sys
-import os
-sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from firebase.firebase_config import initialize_firebase
-from firebase.services import FirebaseService
-from firebase.auth_service import FirebaseAuthService
-from firebase.models import (
-    FirebaseUser as User,
-    FirebaseAdmin as Admin,
-    FirebaseTeacher as Teacher,
-    FirebaseCourse as Course,
-    FirebaseTestimonial as Testimonial,
-    FirebaseAnnouncement as Announcement,
-    FirebaseSupportMessage as SupportMessage,
-    FirebaseTelegramChannel as TelegramChannel,
-    FirebaseVideoLesson as VideoLesson
+from .firebase_config import initialize_firebase
+from .services import FirebaseService
+from .auth_service import FirebaseAuthService
+from .models import (
+    FirebaseUser, FirebaseAdmin, FirebaseTeacher, FirebaseCourse,
+    FirebaseTestimonial, FirebaseAnnouncement, FirebaseSupportMessage,
+    FirebaseTelegramChannel, FirebaseVideoLesson
 )
 
-# Import required models for authentication
-from pydantic import BaseModel, Field, EmailStr
-from typing import List, Optional
-from datetime import datetime, timedelta
-from passlib.context import CryptContext
-from jose import JWTError, jwt
-import uuid
-import random
+ROOT_DIR = Path(__file__).parent.parent
+load_dotenv(ROOT_DIR / '.env')
 
-# Define missing models
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
+# Initialize Firebase
+db = initialize_firebase()
+if db is None:
+    logger.error("Failed to initialize Firebase")
+else:
+    logger.info("Firebase initialized successfully")
+
+# Initialize services
+auth_service = FirebaseAuthService()
+firebase_service = None
+if db is not None:
+    firebase_service = FirebaseService()
+
+# Security
+SECRET_KEY = os.environ.get('SECRET_KEY', "nadeeka_warnakula_secret_key_2024_nadeeka")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get('ACCESS_TOKEN_EXPIRE_MINUTES', 30 * 24 * 60))  # 30 days
+
+pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
+security = HTTPBearer()
+
+# Create the main app
+app = FastAPI(title="Nadeeka Warnakula API with Firebase", version="1.0.0")
+api_router = APIRouter(prefix="/api")
+
+# CORS middleware
+app.add_middleware(
+    CORSMiddleware,
+    allow_credentials=True,
+    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Define models
 class UserCreate(BaseModel):
     full_name: str = Field(..., min_length=2, max_length=100)
     email: EmailStr
@@ -79,18 +104,15 @@ class Token(BaseModel):
     token_type: str
     user: UserResponse
 
-# Add Admin models
 class AdminCreate(BaseModel):
     username: str = Field(..., min_length=3, max_length=50)
     email: EmailStr
     password: str = Field(..., min_length=6)
 
-# Add AdminLogin model
 class AdminLogin(BaseModel):
     username: str
     password: str
 
-# Add AdminResponse model
 class AdminResponse(BaseModel):
     id: str
     username: str
@@ -103,50 +125,93 @@ class AdminToken(BaseModel):
     token_type: str
     admin: AdminResponse
 
-ROOT_DIR = Path(__file__).parent.parent
-load_dotenv(ROOT_DIR / '.env')
+class Teacher(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    name_sinhala: str
+    qualifications: List[str]
+    experience_years: int
+    specializations: List[str]
+    image_url: str
+    bio: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-)
-logger = logging.getLogger(__name__)
+class Course(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    title_sinhala: str
+    description: str
+    year: str
+    type: str  # Theory, Revision, SPEEDY, etc.
+    teacher_id: str
+    duration: str
+    schedule: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_active: bool = True
 
-# Initialize Firebase
-db = initialize_firebase()
-if db is None:
-    logger.error("Failed to initialize Firebase")
-else:
-    logger.info("Firebase initialized successfully")
+class Testimonial(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    student_name: str
+    school: str
+    year: str
+    content: str
+    rating: int = Field(..., ge=1, le=5)
+    image_url: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_featured: bool = False
 
-# Initialize services
-auth_service = FirebaseAuthService()
-# Initialize FirebaseService after Firebase is initialized
-firebase_service = None
-if db is not None:
-    firebase_service = FirebaseService()
+class Announcement(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    title_sinhala: str
+    content: str
+    content_sinhala: str
+    type: str  # general, urgent, exam, class
+    target_year: Optional[str] = None
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_active: bool = True
 
-# Security
-SECRET_KEY = os.environ.get('SECRET_KEY', "nadeeka_warnakula_secret_key_2024_nadeeka")
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = int(os.environ.get('ACCESS_TOKEN_EXPIRE_MINUTES', 30 * 24 * 60))  # 30 days
+class SupportMessage(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    name: str
+    email: EmailStr
+    phone: Optional[str] = None
+    subject: str
+    message: str
+    created_at: datetime = Field(default_factory=datetime.utcnow)
+    is_resolved: bool = False
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-security = HTTPBearer()
+class TelegramChannel(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    title_sinhala: str
+    description: str
+    member_count: str
+    features: List[str]
+    link: str
+    image: str
+    is_active: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
-# Create the main app
-app = FastAPI(title="Nadeeka Warnakula API with Firebase", version="1.0.0")
-api_router = APIRouter(prefix="/api")
+class VideoLesson(BaseModel):
+    id: str = Field(default_factory=lambda: str(uuid.uuid4()))
+    title: str
+    title_sinhala: str
+    description: str
+    video_url: str
+    thumbnail: str
+    duration: str
+    course_id: str
+    is_published: bool = True
+    created_at: datetime = Field(default_factory=datetime.utcnow)
 
-# CORS middleware
-app.add_middleware(
-    CORSMiddleware,
-    allow_credentials=True,
-    allow_origins=os.environ.get('CORS_ORIGINS', '*').split(','),
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+# Helper functions
+async def generate_register_number(al_year: str) -> str:
+    """Generate unique register number in format SC{year}{3-digit-number}"""
+    # In a real implementation, you would check Firestore for existing numbers
+    # For this example, we'll generate a random number
+    number = random.randint(100, 999)
+    return f"SC{al_year}{number}"
 
 # Authentication endpoints
 @api_router.post("/auth/register", response_model=dict)
@@ -200,13 +265,6 @@ async def register_user(user_data: UserCreateWithPassword):
         logger.error(f"Registration error: {str(e)}")
         # For other exceptions, return a generic error
         raise HTTPException(status_code=500, detail="Registration failed. Please try again.")
-
-async def generate_register_number(al_year: str) -> str:
-    """Generate unique register number in format SC{year}{3-digit-number}"""
-    # In a real implementation, you would check Firestore for existing numbers
-    # For this example, we'll generate a random number
-    number = random.randint(100, 999)
-    return f"SC{al_year}{number}"
 
 @api_router.post("/auth/login", response_model=Token)
 async def login_user(user_credentials: UserLogin):
@@ -275,6 +333,10 @@ async def get_teachers():
 
 @api_router.get("/teachers/{teacher_id}", response_model=Teacher)
 async def get_teacher(teacher_id: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     teacher = await firebase_service.get_teacher_by_id(teacher_id)
     if not teacher:
         raise HTTPException(status_code=404, detail="Teacher not found")
@@ -282,6 +344,10 @@ async def get_teacher(teacher_id: str):
 
 @api_router.post("/teachers", response_model=Teacher)
 async def create_teacher(teacher: Teacher):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     teacher_dict = teacher.dict()
     teacher_id = await firebase_service.create_teacher(teacher_dict)
     if teacher_id:
@@ -291,6 +357,10 @@ async def create_teacher(teacher: Teacher):
 
 @api_router.put("/teachers/{teacher_id}", response_model=Teacher)
 async def update_teacher(teacher_id: str, teacher: Teacher):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.update_teacher(teacher_id, teacher.dict(exclude_unset=True))
     if not success:
         raise HTTPException(status_code=404, detail="Teacher not found")
@@ -302,6 +372,10 @@ async def update_teacher(teacher_id: str, teacher: Teacher):
 
 @api_router.delete("/teachers/{teacher_id}", response_model=dict)
 async def delete_teacher(teacher_id: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.delete_teacher(teacher_id)
     if not success:
         raise HTTPException(status_code=404, detail="Teacher not found")
@@ -310,11 +384,19 @@ async def delete_teacher(teacher_id: str):
 # Course endpoints
 @api_router.get("/courses", response_model=List[Course])
 async def get_courses():
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     courses = await firebase_service.get_all_courses(active_only=True)
     return [Course(**course) for course in courses]
 
 @api_router.get("/courses/{course_id}", response_model=Course)
 async def get_course(course_id: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     course = await firebase_service.get_course_by_id(course_id)
     if not course:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -322,6 +404,10 @@ async def get_course(course_id: str):
 
 @api_router.post("/courses", response_model=Course)
 async def create_course(course: Course):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     course_dict = course.dict()
     course_id = await firebase_service.create_course(course_dict)
     if course_id:
@@ -331,6 +417,10 @@ async def create_course(course: Course):
 
 @api_router.put("/courses/{course_id}", response_model=Course)
 async def update_course(course_id: str, course: Course):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.update_course(course_id, course.dict(exclude_unset=True))
     if not success:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -342,6 +432,10 @@ async def update_course(course_id: str, course: Course):
 
 @api_router.delete("/courses/{course_id}", response_model=dict)
 async def delete_course(course_id: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.delete_course(course_id)
     if not success:
         raise HTTPException(status_code=404, detail="Course not found")
@@ -350,16 +444,28 @@ async def delete_course(course_id: str):
 # Testimonial endpoints
 @api_router.get("/testimonials", response_model=List[Testimonial])
 async def get_testimonials():
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     testimonials = await firebase_service.get_all_testimonials()
     return [Testimonial(**testimonial) for testimonial in testimonials]
 
 @api_router.get("/testimonials/featured", response_model=List[Testimonial])
 async def get_featured_testimonials():
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     testimonials = await firebase_service.get_featured_testimonials()
     return [Testimonial(**testimonial) for testimonial in testimonials]
 
 @api_router.post("/testimonials", response_model=Testimonial)
 async def create_testimonial(testimonial: Testimonial):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     testimonial_dict = testimonial.dict()
     testimonial_id = await firebase_service.create_testimonial(testimonial_dict)
     if testimonial_id:
@@ -369,6 +475,10 @@ async def create_testimonial(testimonial: Testimonial):
 
 @api_router.put("/testimonials/{testimonial_id}", response_model=Testimonial)
 async def update_testimonial(testimonial_id: str, testimonial: Testimonial):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.update_testimonial(testimonial_id, testimonial.dict(exclude_unset=True))
     if not success:
         raise HTTPException(status_code=404, detail="Testimonial not found")
@@ -380,6 +490,10 @@ async def update_testimonial(testimonial_id: str, testimonial: Testimonial):
 
 @api_router.delete("/testimonials/{testimonial_id}", response_model=dict)
 async def delete_testimonial(testimonial_id: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.delete_testimonial(testimonial_id)
     if not success:
         raise HTTPException(status_code=404, detail="Testimonial not found")
@@ -388,16 +502,28 @@ async def delete_testimonial(testimonial_id: str):
 # Announcement endpoints
 @api_router.get("/announcements", response_model=List[Announcement])
 async def get_announcements():
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     announcements = await firebase_service.get_all_announcements()
     return [Announcement(**announcement) for announcement in announcements]
 
 @api_router.get("/announcements/{year}")
 async def get_announcements_by_year(year: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     announcements = await firebase_service.get_announcements_by_year(year)
     return [Announcement(**announcement) for announcement in announcements]
 
 @api_router.post("/announcements", response_model=Announcement)
 async def create_announcement(announcement: Announcement):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     announcement_dict = announcement.dict()
     announcement_id = await firebase_service.create_announcement(announcement_dict)
     if announcement_id:
@@ -407,6 +533,10 @@ async def create_announcement(announcement: Announcement):
 
 @api_router.put("/announcements/{announcement_id}", response_model=Announcement)
 async def update_announcement(announcement_id: str, announcement: Announcement):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.update_announcement(announcement_id, announcement.dict(exclude_unset=True))
     if not success:
         raise HTTPException(status_code=404, detail="Announcement not found")
@@ -418,6 +548,10 @@ async def update_announcement(announcement_id: str, announcement: Announcement):
 
 @api_router.delete("/announcements/{announcement_id}", response_model=dict)
 async def delete_announcement(announcement_id: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.delete_announcement(announcement_id)
     if not success:
         raise HTTPException(status_code=404, detail="Announcement not found")
@@ -426,6 +560,10 @@ async def delete_announcement(announcement_id: str):
 # Support Message endpoints
 @api_router.post("/support/messages", response_model=dict)
 async def create_support_message(message: SupportMessage):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     message_dict = message.dict()
     message_id = await firebase_service.create_support_message(message_dict)
     if message_id:
@@ -434,11 +572,19 @@ async def create_support_message(message: SupportMessage):
 
 @api_router.get("/support/messages", response_model=List[SupportMessage])
 async def get_support_messages():
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     messages = await firebase_service.get_all_support_messages()
     return [SupportMessage(**message) for message in messages]
 
 @api_router.put("/support/messages/{message_id}/resolve", response_model=dict)
 async def resolve_support_message(message_id: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.resolve_support_message(message_id)
     if not success:
         raise HTTPException(status_code=404, detail="Message not found")
@@ -446,6 +592,10 @@ async def resolve_support_message(message_id: str):
 
 @api_router.delete("/support/messages/{message_id}", response_model=dict)
 async def delete_support_message(message_id: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.delete_support_message(message_id)
     if not success:
         raise HTTPException(status_code=404, detail="Message not found")
@@ -454,11 +604,19 @@ async def delete_support_message(message_id: str):
 # Telegram Channel endpoints
 @api_router.get("/telegram/channels", response_model=List[TelegramChannel])
 async def get_telegram_channels():
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     channels = await firebase_service.get_all_telegram_channels()
     return [TelegramChannel(**channel) for channel in channels]
 
 @api_router.post("/telegram/channels", response_model=TelegramChannel)
 async def create_telegram_channel(channel: TelegramChannel):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     channel_dict = channel.dict()
     channel_id = await firebase_service.create_telegram_channel(channel_dict)
     if channel_id:
@@ -468,6 +626,10 @@ async def create_telegram_channel(channel: TelegramChannel):
 
 @api_router.put("/telegram/channels/{channel_id}", response_model=TelegramChannel)
 async def update_telegram_channel(channel_id: str, channel: TelegramChannel):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.update_telegram_channel(channel_id, channel.dict(exclude_unset=True))
     if not success:
         raise HTTPException(status_code=404, detail="Channel not found")
@@ -479,6 +641,10 @@ async def update_telegram_channel(channel_id: str, channel: TelegramChannel):
 
 @api_router.delete("/telegram/channels/{channel_id}", response_model=dict)
 async def delete_telegram_channel(channel_id: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.delete_telegram_channel(channel_id)
     if not success:
         raise HTTPException(status_code=404, detail="Channel not found")
@@ -487,11 +653,19 @@ async def delete_telegram_channel(channel_id: str):
 # Video Lesson endpoints
 @api_router.get("/video-lessons", response_model=List[VideoLesson])
 async def get_video_lessons():
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     lessons = await firebase_service.get_all_video_lessons()
     return [VideoLesson(**lesson) for lesson in lessons]
 
 @api_router.post("/video-lessons", response_model=VideoLesson)
 async def create_video_lesson(lesson: VideoLesson):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     lesson_dict = lesson.dict()
     lesson_id = await firebase_service.create_video_lesson(lesson_dict)
     if lesson_id:
@@ -501,6 +675,10 @@ async def create_video_lesson(lesson: VideoLesson):
 
 @api_router.put("/video-lessons/{lesson_id}", response_model=VideoLesson)
 async def update_video_lesson(lesson_id: str, lesson: VideoLesson):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.update_video_lesson(lesson_id, lesson.dict(exclude_unset=True))
     if not success:
         raise HTTPException(status_code=404, detail="Lesson not found")
@@ -512,6 +690,10 @@ async def update_video_lesson(lesson_id: str, lesson: VideoLesson):
 
 @api_router.delete("/video-lessons/{lesson_id}", response_model=dict)
 async def delete_video_lesson(lesson_id: str):
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     success = await firebase_service.delete_video_lesson(lesson_id)
     if not success:
         raise HTTPException(status_code=404, detail="Lesson not found")
@@ -538,6 +720,10 @@ async def get_stats():
 @api_router.get("/admin/users", response_model=List[UserResponse])
 async def get_all_users(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Get all users for admin dashboard"""
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     users = await firebase_service.get_all_users()
     return [UserResponse(**user) for user in users]
 
@@ -545,6 +731,10 @@ async def get_all_users(credentials: HTTPAuthorizationCredentials = Depends(secu
 @api_router.post("/auth/admin/register", response_model=dict)
 async def register_admin(admin_data: AdminCreate):
     """Register a new admin user (for initial setup)"""
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     try:
         # Check if username already exists
         existing_admin = await firebase_service.get_admin_by_username(admin_data.username)
@@ -586,6 +776,10 @@ async def register_admin(admin_data: AdminCreate):
 @api_router.post("/auth/admin/login", response_model=AdminToken)
 async def login_admin(admin_credentials: AdminLogin):
     """Authenticate admin user"""
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     admin = await firebase_service.get_admin_by_username(admin_credentials.username)
     if not admin or not auth_service.verify_password(admin_credentials.password, admin["password_hash"]):
         raise HTTPException(
@@ -610,6 +804,10 @@ async def login_admin(admin_credentials: AdminLogin):
 @api_router.get("/auth/admin/me", response_model=AdminResponse)
 async def get_current_admin_info(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Get current admin info"""
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED,
         detail="Could not validate admin credentials",
@@ -639,6 +837,10 @@ async def get_current_admin_info(credentials: HTTPAuthorizationCredentials = Dep
 @api_router.get("/auth/admin/admins", response_model=List[AdminResponse])
 async def get_all_admins(credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Get all admins for admin dashboard"""
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     admins = await firebase_service.get_all_admins()
     return [AdminResponse(**admin) for admin in admins]
 
@@ -646,6 +848,10 @@ async def get_all_admins(credentials: HTTPAuthorizationCredentials = Depends(sec
 @api_router.delete("/auth/admin/admins/{admin_id}", response_model=dict)
 async def delete_admin(admin_id: str, credentials: HTTPAuthorizationCredentials = Depends(security)):
     """Delete an admin user"""
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     # Get current admin to prevent self-deletion
     try:
         payload = jwt.decode(credentials.credentials, SECRET_KEY, algorithms=[ALGORITHM])
@@ -675,6 +881,10 @@ async def delete_admin(admin_id: str, credentials: HTTPAuthorizationCredentials 
 @api_router.post("/upload/image")
 async def upload_image(file: bytes = File(...), filename: str = Form(...)):
     """Upload an image to Firebase Storage"""
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     try:
         # Upload file to Firebase Storage
         file_url = await firebase_service.upload_file_to_storage(file, filename, "image/jpeg")
@@ -689,6 +899,10 @@ async def upload_image(file: bytes = File(...), filename: str = Form(...)):
 @api_router.post("/upload/video")
 async def upload_video(file: bytes = File(...), filename: str = Form(...)):
     """Upload a video to Firebase Storage"""
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     try:
         # Upload file to Firebase Storage
         file_url = await firebase_service.upload_file_to_storage(file, filename, "video/mp4")
@@ -703,6 +917,10 @@ async def upload_video(file: bytes = File(...), filename: str = Form(...)):
 @api_router.delete("/upload/file/{filename}")
 async def delete_file(filename: str):
     """Delete a file from Firebase Storage"""
+    # Check if Firebase service is initialized
+    if firebase_service is None:
+        raise HTTPException(status_code=500, detail="Firebase service not initialized")
+    
     try:
         success = await firebase_service.delete_file_from_storage(filename)
         if not success:
@@ -733,7 +951,7 @@ if __name__ == "__main__":
     log_level = os.environ.get('LOG_LEVEL', 'info').lower()
     
     uvicorn.run(
-        "server_firebase:app",
+        "server_fixed:app",
         host=host,
         port=port,
         log_level=log_level,

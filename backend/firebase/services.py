@@ -2,7 +2,10 @@ import firebase_admin
 from firebase_admin import firestore, auth
 from typing import List, Optional, Dict, Any
 from datetime import datetime
-from .models import (
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+from firebase.models import (
     FirebaseUser, FirebaseAdmin, FirebaseTeacher, FirebaseCourse,
     FirebaseTestimonial, FirebaseAnnouncement, FirebaseSupportMessage,
     FirebaseTelegramChannel, FirebaseVideoLesson
