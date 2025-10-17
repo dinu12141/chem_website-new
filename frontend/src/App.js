@@ -1,7 +1,7 @@
 import React, { useRef } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
-import { FirebaseAuthProvider } from './contexts/FirebaseAuthContext';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
+import { AuthProvider } from './contexts/AuthContext';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import Home from './pages/Home';
@@ -10,10 +10,10 @@ import Classes from './pages/Classes';
 import Testimonials from './pages/Testimonials';
 import Telegram from './pages/Telegram';
 import Support from './pages/Support';
-import Login from './pages/FirebaseLogin';
+import Login from './pages/Login';
 import StudentLogin from './pages/StudentLogin';
-import Register from './pages/FirebaseRegister';
-import Dashboard from './pages/FirebaseDashboard';
+import Register from './pages/Register';
+import Dashboard from './pages/Dashboard';
 import Announcements from './pages/Announcements';
 import AdminDashboard from './pages/AdminDashboard';
 import AdminLogin from './pages/AdminLogin';
@@ -65,7 +65,7 @@ const AnimatedRoutes = () => {
 
 function App() {
   return (
-    <FirebaseAuthProvider>
+    <AuthProvider>
       <Router>
         <div className="App min-h-screen bg-gray-900 text-white">
           <Navbar />
@@ -74,7 +74,7 @@ function App() {
           <Toaster />
         </div>
       </Router>
-    </FirebaseAuthProvider>
+    </AuthProvider>
   );
 }
 

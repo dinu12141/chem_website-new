@@ -38,7 +38,6 @@
     "cra-template": "1.2.0",
     "date-fns": "^4.1.0",
     "embla-carousel-react": "^8.6.0",
-    "firebase": "^10.12.0",
     "input-otp": "^1.4.2",
     "lucide-react": "^0.507.0",
     "next-themes": "^0.4.6",
@@ -61,7 +60,8 @@
     "build": "craco build",
     "test": "craco test",
     "serve": "serve -s build -l 3000",
-    "prod": "yarn build && yarn serve"
+    "prod": "yarn build && yarn serve",
+    "test:firebase": "node ../test_frontend_firebase.js"
   },
   "browserslist": {
     "production": [

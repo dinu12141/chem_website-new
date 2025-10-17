@@ -9,7 +9,8 @@ body {
         "Helvetica Neue", sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background-color: #F7941D;
+    background-color: #111827; /* Dark gray background */
+    color: #F9FAFB; /* Light text color */
     min-height: 100vh;
     overflow-x: hidden;
 }
@@ -32,8 +33,6 @@ code {
     font-family: source-code-pro, Menlo, Monaco, Consolas, "Courier New",
         monospace;
 }
-
-
 
 @layer base {
   :root {
@@ -90,9 +89,6 @@ code {
         --chart-5: 340 75% 55%;
     }
 }
-
-
-
 
 @layer base {
   * {
